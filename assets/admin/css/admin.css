@@ -1,0 +1,68 @@
+
+
+.clear{
+	clear: both;
+}
+.form-control-sm{
+	height: 25px !important;
+	padding-top: 5px !important;
+}
+.pull-right{
+	float:right!important
+}
+.pull-left{
+	float:left!important
+}
+.sm_modal .modal-dialog {
+  width: 400px;
+  margin: 40px auto;
+}
+.btn-primary, .btn-info, .btn-success{
+	color: #fff !important;
+}
+.progressBarChangePassBtn, .progressBarLoginBtn, .progressBarBtn{
+	display: none;
+}
+.profile-image img{
+	max-height: 150px;
+	max-width: 150px;
+}
+.change-avatar img{
+	width: 120px;
+	height: 120px;
+}
+.btn-sm{padding:.25rem .5rem;font-size:.875rem;border-radius:.2rem}
+.btn-xs{padding:1px 5px;font-size:12px;line-height:1.5;border-radius:3px}
+
+.w-break tbody tr td{
+	word-break: normal !important;
+	word-wrap: break-word !important;
+}
+.no_break{
+	word-wrap: normal !important;
+	word-break: normal !important;
+	white-space: nowrap;
+}
+.tbl-responsive{
+	display: block;
+	width: 100%;
+	overflow-x: hidden;
+	padding-bottom: 10px;
+}
+.banner_detail{
+	width: 100% !important;
+}
+.promo_banner_upload img{
+	height: 150px;
+}
+#ads_notification_area{
+	display: none;
+}
+@media screen and (max-width: 767px) {
+  	.tbl-responsive{
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+		padding-bottom: 10px;
+	}
+}
