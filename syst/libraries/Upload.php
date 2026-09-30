@@ -512,7 +512,7 @@ class CI_Upload {
 		}
 
 		// Sanitize the file name for security
-		$this->file_name = $this->_CI->security->sanitize_filename($this->file_name);
+		$this->file_name = basename($this->_CI->security->sanitize_filename($this->file_name));
 
 		// Truncate the file name if it's too long
 		if ($this->max_filename > 0)
@@ -563,9 +563,11 @@ class CI_Upload {
 		 * we'll use move_uploaded_file(). One of the two should
 		 * reliably work in most environments
 		 */
-		if ( ! @copy($this->file_temp, $this->upload_path.$this->file_name))
+		$destination = $this->upload_path . basename($this->file_name);
+
+		if ( ! @copy($this->file_temp, $destination))
 		{
-			if ( ! @move_uploaded_file($this->file_temp, $this->upload_path.$this->file_name))
+			if ( ! @move_uploaded_file($this->file_temp, $destination))
 			{
 				$this->set_error('upload_destination_error', 'error');
 				return FALSE;
@@ -578,7 +580,7 @@ class CI_Upload {
 		 * file was an image). We use this information
 		 * in the "data" function.
 		 */
-		$this->set_image_properties($this->upload_path.$this->file_name);
+		$this->set_image_properties($destination);
 
 		return TRUE;
 	}
@@ -631,6 +633,9 @@ class CI_Upload {
 	 */
 	public function set_upload_path($path)
 	{
+		// Strip directory traversal sequences to prevent path injection attacks
+		$path = str_replace('\\', '/', $path);
+		$path = preg_replace('#(/\.\./|\.\./|/\.\.|\.\.)#', '', $path);
 		// Make sure it has a trailing slash
 		$this->upload_path = rtrim($path, '/').'/';
 		return $this;
@@ -651,6 +656,8 @@ class CI_Upload {
 	 */
 	public function set_filename($path, $filename)
 	{
+		$filename = basename($filename);
+
 		if ($this->encrypt_name === TRUE)
 		{
 			$filename = md5(uniqid(mt_rand())).$this->file_ext;
@@ -992,10 +999,25 @@ class CI_Upload {
 			return FALSE;
 		}
 
-		if (realpath($this->upload_path) !== FALSE)
+		$real_path = realpath($this->upload_path);
+		if ($real_path === FALSE)
 		{
-			$this->upload_path = str_replace('\\', '/', realpath($this->upload_path));
+			$this->set_error('upload_no_filepath', 'error');
+			return FALSE;
 		}
+
+		$original_path = str_replace('\\', '/', realpath(BASEPATH.'..'));
+		$resolved = str_replace('\\', '/', $real_path);
+
+		// Ensure resolved path stays within the application root — prevents
+		// directory traversal escaping outside the allowed directory tree
+		if (strpos($resolved.'/', $original_path.'/') !== 0)
+		{
+			$this->set_error('upload_no_filepath', 'error');
+			return FALSE;
+		}
+
+		$this->upload_path = rtrim($resolved, '/\\').'/';
 
 		if ( ! is_dir($this->upload_path))
 		{
@@ -1009,7 +1031,6 @@ class CI_Upload {
 			return FALSE;
 		}
 
-		$this->upload_path = preg_replace('/(.+?)\/*$/', '\\1/',  $this->upload_path);
 		return TRUE;
 	}
 
