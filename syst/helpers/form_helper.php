@@ -968,6 +968,10 @@ if ( ! function_exists('_parse_form_attributes'))
 			{
 				continue;
 			}
+			else
+			{
+				$val = htmlspecialchars((string) $val, ENT_QUOTES, config_item('charset'));
+			}
 
 			$att .= $key.'="'.$val.'" ';
 		}
@@ -1006,7 +1010,7 @@ if ( ! function_exists('_attributes_to_string'))
 
 			foreach ($attributes as $key => $val)
 			{
-				$atts .= ' '.$key.'="'.$val.'"';
+				$atts .= ' '.$key.'="'.htmlspecialchars((string) $val, ENT_QUOTES, config_item('charset')).'"';
 			}
 
 			return $atts;

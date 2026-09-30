@@ -126,7 +126,7 @@
 								<span class="user-img">
 									<img class="rounded-circle" src="<?=base_url('media/avatar/'.$this->session->userdata('user_avatar'))?>" width="36" height="36" alt="User Avatar">
 								</span>
-								<span class="user-name-header d-none d-md-inline-block ml-2 font-weight-600"><?php echo $this->session->userdata('user_full_name'); ?></span>
+								<span class="user-name-header d-none d-md-inline-block ml-2 font-weight-600"><?php echo htmlspecialchars($this->session->userdata('user_full_name'), ENT_QUOTES, 'UTF-8'); ?></span>
 							</a>
 							<div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
 								<div class="user-header">
@@ -134,7 +134,7 @@
 										<img src="<?=base_url('media/avatar/'.$this->session->userdata('user_avatar'))?>" alt="User Image" class="avatar-img rounded-circle">
 									</div>
 									<div class="user-text">
-										<h6><?php echo $this->session->userdata('user_full_name'); ?></h6>
+										<h6><?php echo htmlspecialchars($this->session->userdata('user_full_name'), ENT_QUOTES, 'UTF-8'); ?></h6>
 										<p class="text-muted mb-0 badge badge-pill badge-primary-light"><?=ucwords($this->session->userdata('account_type'))?></p>
 									</div>
 								</div>
@@ -160,7 +160,7 @@
 					<div class="col-md-12 col-12">
 						<form method="GET" action="<?=base_url('home/search_results')?>">
                             <div class="input-group">
-							  <input type="text" name="keyword" value="<?php if(isset($keyword)){ echo $keyword;} ?>" class="form-control" placeholder="Search by key, business or ad name" aria-label="Search ads">
+							  <input type="text" name="keyword" value="<?php if(isset($keyword)){ echo htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8');} ?>" class="form-control" placeholder="Search by key, business or ad name" aria-label="Search ads">
 							  <div class="input-group-append">
 							    <button class="btn btn-primary" type="submit"><i class="fa fa-search mr-1"></i> Search</button>
 							  </div>

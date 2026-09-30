@@ -22,26 +22,26 @@
 				</div>
 				<div class="card-body p-4">
 					<div class="form-group mb-3">
-						<label class="font-weight-700 text-dark small text-uppercase">Ad Campaign Title <span class="text-danger">*</span></label>
+						<label for="ad_title" class="font-weight-700 text-dark small text-uppercase">Ad Campaign Title <span class="text-danger">*</span></label>
 						<input type="text" name="title" id="ad_title" class="form-control" placeholder="e.g., Special 50% Weekend Discount on Electronics" required style="border-radius: 8px; height: 46px;">
 						<small class="form-text text-muted">Catchy title summarizing your promotion or brand message.</small>
 					</div>
 
 					<div class="row">
 						<div class="col-md-7 mb-3">
-							<label class="font-weight-700 text-dark small text-uppercase">Destination Link / Website</label>
+							<label for="ad_url" class="font-weight-700 text-dark small text-uppercase">Destination Link / Website</label>
 							<div class="input-group">
 								<div class="input-group-prepend">
 									<span class="input-group-text bg-light"><i class="fas fa-link text-muted"></i></span>
 								</div>
-								<input type="url" name="url" class="form-control" placeholder="https://yourwebsite.com or WhatsApp link" style="border-radius: 0 8px 8px 0; height: 46px;">
+								<input type="url" name="url" id="ad_url" class="form-control" placeholder="https://yourwebsite.com or WhatsApp link" style="border-radius: 0 8px 8px 0; height: 46px;">
 							</div>
 							<small class="form-text text-muted">Where users can visit after completing the ad quiz.</small>
 						</div>
 
 						<div class="col-md-5 mb-3">
-							<label class="font-weight-700 text-dark small text-uppercase">Quiz Time Limit <span class="text-danger">*</span></label>
-							<select name="question_timer" class="form-control custom-select" style="border-radius: 8px; height: 46px;">
+							<label for="question_timer" class="font-weight-700 text-dark small text-uppercase">Quiz Time Limit <span class="text-danger">*</span></label>
+							<select name="question_timer" id="question_timer" class="form-control custom-select" style="border-radius: 8px; height: 46px;">
 								<option value="1">1 Minute</option>
 								<option value="2" selected>2 Minutes (Recommended)</option>
 								<option value="3">3 Minutes</option>
@@ -52,7 +52,7 @@
 					</div>
 
 					<div class="form-group mb-0">
-						<label class="font-weight-700 text-dark small text-uppercase">Ad Description & Story Content <span class="text-danger">*</span></label>
+						<label for="contents" class="font-weight-700 text-dark small text-uppercase">Ad Description & Story Content <span class="text-danger">*</span></label>
 						<textarea name="contents" id="contents" class="form-control" rows="7" placeholder="Write full details about your product, service, pricing, offers, branches, and contact information. Readers will need to read this carefully to answer your quiz questions!" required style="border-radius: 8px;"></textarea>
 						<small class="form-text text-muted">Make sure to include the answers to your interactive questions within this content!</small>
 					</div>
@@ -82,16 +82,17 @@
 									<span class="badge badge-primary-light text-primary font-weight-600 px-2 py-1" style="font-size: 11px;">Standard Question</span>
 								</div>
 								<div class="form-group mb-2">
-									<input type="text" name="questions[0][text]" class="form-control" placeholder="e.g., What is the discount percentage offered this weekend?" required style="border-radius: 8px;">
+									<label for="q0_text" class="small font-weight-600 text-muted mb-1">Question Text</label>
+									<input type="text" name="questions[0][text]" id="q0_text" class="form-control" placeholder="e.g., What is the discount percentage offered this weekend?" required style="border-radius: 8px;">
 								</div>
 								<div class="row">
 									<div class="col-md-7 mb-2">
-										<label class="small font-weight-600 text-muted mb-1">Answer Options (Comma separated)</label>
-										<input type="text" name="questions[0][answers]" class="form-control" placeholder="e.g., 20%, 30%, 50%, 70%" required style="border-radius: 8px;">
+										<label for="q0_answers" class="small font-weight-600 text-muted mb-1">Answer Options (Comma separated)</label>
+										<input type="text" name="questions[0][answers]" id="q0_answers" class="form-control" placeholder="e.g., 20%, 30%, 50%, 70%" required style="border-radius: 8px;">
 									</div>
 									<div class="col-md-5 mb-2">
-										<label class="small font-weight-600 text-muted mb-1">Correct Answer (Exact match)</label>
-										<input type="text" name="questions[0][correct]" class="form-control" placeholder="e.g., 50%" required style="border-radius: 8px;">
+										<label for="q0_correct" class="small font-weight-600 text-muted mb-1">Correct Answer (Exact match)</label>
+										<input type="text" name="questions[0][correct]" id="q0_correct" class="form-control" placeholder="e.g., 50%" required style="border-radius: 8px;">
 									</div>
 								</div>
 							</div>
@@ -136,7 +137,7 @@
 				</div>
 				<div class="card-body p-4">
 					<div class="form-group mb-3">
-						<label class="font-weight-700 text-dark small text-uppercase">Total Budget (TZS) <span class="text-danger">*</span></label>
+						<label for="budget_allocated" class="font-weight-700 text-dark small text-uppercase">Total Budget (TZS) <span class="text-danger">*</span></label>
 						<div class="input-group">
 							<input type="number" name="budget_allocated" id="budget_allocated" class="form-control font-weight-700" placeholder="50000" min="1000" step="500" required style="border-radius: 8px 0 0 8px; height: 46px;">
 							<div class="input-group-append">
@@ -147,7 +148,7 @@
 					</div>
 
 					<div class="form-group mb-3">
-						<label class="font-weight-700 text-dark small text-uppercase">Reward Per View / Reader <span class="text-danger">*</span></label>
+						<label for="cost_per_click" class="font-weight-700 text-dark small text-uppercase">Reward Per View / Reader <span class="text-danger">*</span></label>
 						<div class="input-group">
 							<input type="number" name="cost_per_click" id="cost_per_click" class="form-control font-weight-700" placeholder="100" min="20" step="10" required style="border-radius: 8px 0 0 8px; height: 46px;">
 							<div class="input-group-append">

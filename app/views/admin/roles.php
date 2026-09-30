@@ -14,8 +14,8 @@
 					<form method="POST" id="data-form">
 						<div class="form-group">
 							<label>Role Name:</label>
-							<input type="text" name="role_name" value="<?php if(isset($role) && $role!=""){ echo $info['role_name'];} ?>" class="form-control" placeholder="eg. Customer support">
-							<input type="hidden" name="role" value="<?php if(isset($role) && $role!=""){ echo $role;} ?>">
+							<input type="text" name="role_name" value="<?php if(isset($role) && $role!=""){ echo htmlspecialchars($info['role_name'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control" placeholder="eg. Customer support">
+							<input type="hidden" name="role" value="<?php if(isset($role) && $role!=""){ echo htmlspecialchars($role, ENT_QUOTES, 'UTF-8');} ?>">
 						</div>
 						<div id="resultMsg"></div>
                         <div class="form-group">

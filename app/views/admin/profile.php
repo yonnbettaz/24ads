@@ -23,7 +23,7 @@
 							</h5>
 							<div class="row">
 								<p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Name</p>
-								<p class="col-sm-10"><?php echo $info['name']; ?></p>
+								<p class="col-sm-10"><?php echo htmlspecialchars($info['name'], ENT_QUOTES, 'UTF-8'); ?></p>
 							</div>
 							<div class="row">
 								<p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Gender</p>
@@ -31,11 +31,11 @@
 							</div>
 							<div class="row">
 								<p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Email</p>
-								<p class="col-sm-10"><?php echo $info['email']; ?></p>
+								<p class="col-sm-10"><?php echo htmlspecialchars($info['email'], ENT_QUOTES, 'UTF-8'); ?></p>
 							</div>
 							<div class="row">
 								<p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Mobile</p>
-								<p class="col-sm-10"><?php echo $info['phone']; ?></p>
+								<p class="col-sm-10"><?php echo htmlspecialchars($info['phone'], ENT_QUOTES, 'UTF-8'); ?></p>
 							</div>
 						</div>
 					</div>
@@ -54,7 +54,7 @@
 											<div class="col-12 col-sm-6">
 												<div class="form-group">
 													<label>Full Name</label>
-													<input type="text" name="name" class="form-control" value="<?php echo $info['name']; ?>" readonly>
+													<input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($info['name'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
 												</div>
 											</div>
 											<div class="col-12 col-sm-6">
@@ -70,13 +70,13 @@
 											<div class="col-12 col-sm-6">
 												<div class="form-group">
 													<label>Email ID</label>
-													<input type="email" name="email" class="form-control" value="<?php echo $info['email']; ?>">
+													<input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($info['email'], ENT_QUOTES, 'UTF-8'); ?>">
 												</div>
 											</div>
 											<div class="col-12 col-sm-6">
 												<div class="form-group">
 													<label>Mobile</label>
-													<input type="text" name="phone" value="<?php echo $info['phone']; ?>" class="form-control">
+													<input type="text" name="phone" value="<?php echo htmlspecialchars($info['phone'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control">
 												</div>
 											</div>
 											<div class="col-12 col-md-12">

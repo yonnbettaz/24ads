@@ -14,12 +14,12 @@
 					<form method="POST" id="data-form">
 						<div class="form-group">
 							<label>Provider Name:</label>
-							<input type="text" name="setting_key" value="<?php if(isset($info['setting_key']) && $info['setting_key']!=""){ echo $info['setting_key'];} ?>" class="form-control" placeholder="eg. minimum_budge">
-							<input type="hidden" name="setting" value="<?php if(isset($setting) && $setting!=""){ echo $setting;} ?>">
+							<input type="text" name="setting_key" value="<?php if(isset($info['setting_key']) && $info['setting_key']!=""){ echo htmlspecialchars($info['setting_key'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control" placeholder="eg. minimum_budge">
+							<input type="hidden" name="setting" value="<?php if(isset($setting) && $setting!=""){ echo htmlspecialchars($setting, ENT_QUOTES, 'UTF-8');} ?>">
 						</div>
 						<div class="form-group">
 							<label>Provider Name:</label>
-							<input type="text" name="setting_value" value="<?php if(isset($info['setting_value']) && $info['setting_value']!=""){ echo $info['setting_value'];} ?>" class="form-control" placeholder="eg. 300">
+							<input type="text" name="setting_value" value="<?php if(isset($info['setting_value']) && $info['setting_value']!=""){ echo htmlspecialchars($info['setting_value'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control" placeholder="eg. 300">
 						</div>
 						<div id="resultMsg"></div>
                         <div class="form-group">

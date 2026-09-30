@@ -31,7 +31,7 @@
 			   <button type="button" class="close" data-dismiss="alert"  
 			      aria-hidden="true"> 
 			      &times; 
-			   </button>'. $msg. '</div>';
+			   </button>'. htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'). '</div>';
 	}
 
 	function SuccessMsg($msg){
@@ -39,7 +39,7 @@
 			   <button type="button" class="close" data-dismiss="alert"  
 			      aria-hidden="true"> 
 			      &times; 
-			   </button>'. $msg. '</div>';
+			   </button>'. htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'). '</div>';
 	}
 
 	function sqlSafe($val){

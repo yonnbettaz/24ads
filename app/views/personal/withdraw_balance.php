@@ -154,7 +154,7 @@ if($avail_bal < 0){ $avail_bal = 0; }
 								<div class="input-group-prepend">
 									<span class="input-group-text bg-light border-right-0 font-weight-700 text-muted">TZS</span>
 								</div>
-								<input type="number" name="amount" id="totalAmount" class="form-control border-left-0 font-weight-700" style="font-size: 16px;" value="<?php if(isset($info[0]['amount']) && $info[0]['amount']!=''){ echo $info[0]['amount']; } ?>" placeholder="Min 1,600" min="1600" onkeyup="setAmount();">
+								<input type="number" name="amount" id="totalAmount" class="form-control border-left-0 font-weight-700" style="font-size: 16px;" value="<?php if(isset($info[0]['amount']) && $info[0]['amount']!=''){ echo htmlspecialchars($info[0]['amount'], ENT_QUOTES, 'UTF-8'); } ?>" placeholder="Min 1,600" min="1600" onkeyup="setAmount();">
 							</div>
 							
 							<!-- Quick Amount Chips -->

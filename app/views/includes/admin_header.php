@@ -113,7 +113,7 @@
 								<img src="<?=base_url('media/admin_avatar/'.$this->session->userdata('user_avatar'))?>" alt="User Image" class="avatar-img rounded-circle">
 							</div>
 							<div class="user-text">
-								<h6><?php echo $this->session->userdata('user_full_name'); ?></h6>
+								<h6><?php echo htmlspecialchars($this->session->userdata('user_full_name'), ENT_QUOTES, 'UTF-8'); ?></h6>
 								<p class="text-muted mb-0">Admin</p>
 							</div>
 						</div>

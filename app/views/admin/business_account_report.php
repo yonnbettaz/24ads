@@ -15,11 +15,11 @@
 						<form class="row" method="GET">
 							<div class="col-md-8">
 								<div class="input-group">
-	                                <input type="date" name="startDate" class="form-control" value="<?php if(isset($startDate)){ echo $startDate;} ?>" />
+	                                <input type="date" name="startDate" class="form-control" value="<?php if(isset($startDate)){ echo htmlspecialchars($startDate, ENT_QUOTES, 'UTF-8');} ?>" />
 									<div class="input-group-prepend">
 	                                	<span class="input-group-text"><i class="fa fa-calendar"></i></span>
 	                            	</div>
-	                                <input type="date" name="endDate" class="form-control" value="<?php if(isset($endDate)){ echo $endDate;} ?>" />
+	                                <input type="date" name="endDate" class="form-control" value="<?php if(isset($endDate)){ echo htmlspecialchars($endDate, ENT_QUOTES, 'UTF-8');} ?>" />
 								</div>
 								<p><small>Filter report by start date and end date.</small></p>
 							</div>

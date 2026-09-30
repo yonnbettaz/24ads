@@ -14,24 +14,24 @@
 					<form method="POST" id="data-form" class="row">
 						<div class="form-group col-md-12">
 							<label>Title:</label>
-							<textarea name="title" class="form-control"><?php if(isset($info['title']) && $info['title']!=""){ echo $info['title'];} ?></textarea>
-							<input type="hidden" name="promo" value="<?php if(isset($promo) && $promo!=""){ echo $promo;} ?>">
+							<textarea name="title" class="form-control"><?php if(isset($info['title']) && $info['title']!=""){ echo htmlspecialchars($info['title'], ENT_QUOTES, 'UTF-8');} ?></textarea>
+							<input type="hidden" name="promo" value="<?php if(isset($promo) && $promo!=""){ echo htmlspecialchars($promo, ENT_QUOTES, 'UTF-8');} ?>">
 						</div>
 						<div class="form-group col-md-12">
 							<label>Link/Url:</label>
-							<input type="text" name="url" value="<?php if(isset($info['url']) && $info['url']!=""){ echo $info['url'];} ?>" class="form-control" placeholder="http://">
+							<input type="text" name="url" value="<?php if(isset($info['url']) && $info['url']!=""){ echo htmlspecialchars($info['url'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control" placeholder="http://">
 						</div>
 						<div class="form-group col-md-4">
 							<label>View Location:</label>
-							<input type="text" name="view_location" value="<?php if(isset($info['view_location']) && $info['view_location']!=""){ echo $info['view_location'];} ?>" class="form-control">
+							<input type="text" name="view_location" value="<?php if(isset($info['view_location']) && $info['view_location']!=""){ echo htmlspecialchars($info['view_location'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control">
 						</div>
 						<div class="form-group col-md-4">
 							<label>Expire Date:</label>
-							<input type="date" name="expire_date" value="<?php if(isset($info['expire_date']) && $info['expire_date']!=""){ echo $info['expire_date'];} ?>" class="form-control">
+							<input type="date" name="expire_date" value="<?php if(isset($info['expire_date']) && $info['expire_date']!=""){ echo htmlspecialchars($info['expire_date'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control">
 						</div>
 						<div class="form-group col-md-4">
 							<label>Cost:</label>
-							<input type="number" name="cost" value="<?php if(isset($info['cost']) && $info['cost']!=""){ echo $info['cost'];} ?>" class="form-control">
+							<input type="number" name="cost" value="<?php if(isset($info['cost']) && $info['cost']!=""){ echo htmlspecialchars($info['cost'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control">
 						</div>
 						<div class="form-group col-md-12">
 							<label>Banner:</label>

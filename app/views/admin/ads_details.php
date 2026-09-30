@@ -17,13 +17,13 @@
 						</a>
 					</div>
 					<div class="col-md-6 profile-user-info123">
-						<h4 class="user-name mb-0"><?php echo ucwords($info['title']); ?></h4>
-						<h6 class="text-muted">By @ <?php echo ucwords($info['business_name']); ?></h6>
-						<p>Question Time: <b><?php echo $info['question_timer']; ?></b> Mins</p>
-						<p>Budget Allocated: <b><?php echo $info['budget_allocated']; ?></b> TZS</p>
-						<p>Cost per question: <b><?php echo $info['cost_per_click']; ?></b> TZS</p>
-						<p>Bonus Allocated: <b><?php echo $info['total_bonus_allocated']; ?></b> TZS</p>
-						<p>Bonus per Ads: <b><?php echo $info['bonus']; ?></b> TZS</p>
+						<h4 class="user-name mb-0"><?php echo htmlspecialchars(ucwords($info['title']), ENT_QUOTES, 'UTF-8'); ?></h4>
+						<h6 class="text-muted">By @ <?php echo htmlspecialchars(ucwords($info['business_name']), ENT_QUOTES, 'UTF-8'); ?></h6>
+						<p>Question Time: <b><?php echo htmlspecialchars($info['question_timer'], ENT_QUOTES, 'UTF-8'); ?></b> Mins</p>
+						<p>Budget Allocated: <b><?php echo htmlspecialchars($info['budget_allocated'], ENT_QUOTES, 'UTF-8'); ?></b> TZS</p>
+						<p>Cost per question: <b><?php echo htmlspecialchars($info['cost_per_click'], ENT_QUOTES, 'UTF-8'); ?></b> TZS</p>
+						<p>Bonus Allocated: <b><?php echo htmlspecialchars($info['total_bonus_allocated'], ENT_QUOTES, 'UTF-8'); ?></b> TZS</p>
+						<p>Bonus per Ads: <b><?php echo htmlspecialchars($info['bonus'], ENT_QUOTES, 'UTF-8'); ?></b> TZS</p>
 						<p>Ads Status: <b>
 							<?php
 								$ads_status="";
@@ -39,9 +39,9 @@
 								echo $ads_status;
 							?>
 							</b></p>
-						<div class="about-text"><?php echo $info['contents']; ?></div>
+						<div class="about-text"><?php echo htmlspecialchars($info['contents'], ENT_QUOTES, 'UTF-8'); ?></div>
 						<hr>
-						<p><?php if($info['rejected_reason']!="") echo 'Rejected Reason: <b>'.ucfirst($info['rejected_reason']).'</b>'; ?></p>
+						<p><?php if($info['rejected_reason']!="") echo 'Rejected Reason: <b>'.htmlspecialchars(ucfirst($info['rejected_reason']), ENT_QUOTES, 'UTF-8').'</b>'; ?></p>
 					</div>
 					<div class="col-md-2 profile-btn">						
 						<?php

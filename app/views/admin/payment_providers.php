@@ -22,8 +22,8 @@
 						</div>
 						<div class="form-group">
 							<label>Provider Name:</label>
-							<input type="text" name="provider" value="<?php if(isset($info['provider']) && $info['provider']!=""){ echo $info['provider'];} ?>" class="form-control" placeholder="eg. Mpesa or crdb">
-							<input type="hidden" name="provider_id" value="<?php if(isset($provider) && $provider!=""){ echo $provider;} ?>">
+							<input type="text" name="provider" value="<?php if(isset($info['provider']) && $info['provider']!=""){ echo htmlspecialchars($info['provider'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control" placeholder="eg. Mpesa or crdb">
+							<input type="hidden" name="provider_id" value="<?php if(isset($provider) && $provider!=""){ echo htmlspecialchars($provider, ENT_QUOTES, 'UTF-8');} ?>">
 						</div>
 						<div id="resultMsg"></div>
                         <div class="form-group">
@@ -70,8 +70,8 @@
 										$action.='<a href="javascript:void(0);" onclick="delete_row('.$provider->id.', \'payment_provider\', \'provider\');" class="btn btn-xs btn-danger m-l-10"><i class="fa fa-trash"></i></a>';
 										echo '<tr>';
 										echo '<td class="text-center">'.$counter.'</td>';
-										echo '<td>'.ucwords($provider->method).'</td>';
-										echo '<td>'.$provider->provider.'</td>';
+										echo '<td>'.htmlspecialchars(ucwords($provider->method), ENT_QUOTES, 'UTF-8').'</td>';
+										echo '<td>'.htmlspecialchars($provider->provider, ENT_QUOTES, 'UTF-8').'</td>';
 										echo '<td>'.$status.'</td>';
 										echo '<td>'.$action.'</td>';
 										echo '</tr>';

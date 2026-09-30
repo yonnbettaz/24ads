@@ -15,8 +15,8 @@
 						<div class="form-group row">
 							<label class="col-form-label col-md-3">Name:</label>
 							<div class="col-md-9">
-								<input type="text" name="name" value="<?php if($user!="" && $info['name']!=""){ echo $info['name'];} ?>" class="form-control">
-								<input type="hidden" name="user" value="<?php if($user!="" && $user!=""){ echo $user;} ?>">
+								<input type="text" name="name" value="<?php if($user!="" && $info['name']!=""){ echo htmlspecialchars($info['name'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control">
+								<input type="hidden" name="user" value="<?php if($user!="" && $user!=""){ echo htmlspecialchars($user, ENT_QUOTES, 'UTF-8');} ?>">
 							</div>
 						</div>
 						<div class="form-group row">
@@ -32,13 +32,13 @@
 						<div class="form-group row">
 							<label class="col-form-label col-md-3">Phone:</label>
 							<div class="col-md-9">
-								<input type="text" name="phone" value="<?php if($user!="" && $info['phone']!=""){ echo $info['phone'];} ?>" class="form-control">
+								<input type="text" name="phone" value="<?php if($user!="" && $info['phone']!=""){ echo htmlspecialchars($info['phone'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control">
 							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-form-label col-md-3">Email:</label>
 							<div class="col-md-9">
-								<input type="text" name="email" value="<?php if($user!="" && $info['email']!=""){ echo $info['email'];} ?>" class="form-control">
+								<input type="text" name="email" value="<?php if($user!="" && $info['email']!=""){ echo htmlspecialchars($info['email'], ENT_QUOTES, 'UTF-8');} ?>" class="form-control">
 							</div>
 						</div>
 						<div class="form-group row">
