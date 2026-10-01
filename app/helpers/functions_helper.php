@@ -2,17 +2,23 @@
 	if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 	function recordTrails($table, $tableKey, $desc, $username=''){
-        $ci =& get_instance();
-        $ci->load->database();
-        $actionDate=date('d-m-Y H:i:s');
-        $data = array(
-	        'action_table' => $table,
-	        'primary_key_table' => $tableKey,
-	        'description' => $desc,
-	        'action_by' => $username,
-	        'action_date' => $actionDate
-	    );
-    	$ci->db->insert('z_audit_trails', $data);
+        try {
+            $ci =& get_instance();
+            $ci->load->database();
+            $actionDate=date('d-m-Y H:i:s');
+            $data = array(
+                'action_table' => $table,
+                'primary_key_table' => $tableKey,
+                'description' => $desc,
+                'action_by' => $username,
+                'action_date' => $actionDate
+            );
+            if ($ci->db->table_exists('z_audit_trails')) {
+                $ci->db->insert('z_audit_trails', $data);
+            }
+        } catch (\Throwable $e) {
+            log_message('error', 'recordTrails error: ' . $e->getMessage());
+        }
     }
 
     function isTokenValid(){

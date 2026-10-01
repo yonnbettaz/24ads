@@ -271,9 +271,6 @@
 		
 		<!-- Slimscroll JS -->
         <script src="<?=base_url('assets/admin/plugins/slimscroll/jquery.slimscroll.min.js')?>"></script>		
-		<script src="<?=base_url('assets/admin/plugins/raphael/raphael.min.js')?>"></script>    
-		<script src="<?=base_url('assets/admin/plugins/morris/morris.min.js')?>"></script>  
-		<script src="<?=base_url('assets/admin/js/chart.morris.js')?>"></script>
 		<!-- Datatables JS -->
 		<script src="<?=base_url('assets/admin/plugins/datatables/jquery.dataTables.min.js')?>"></script>
 		<script src="<?=base_url('assets/admin/plugins/datatables/datatables.min.js')?>"></script>		

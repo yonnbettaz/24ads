@@ -13,7 +13,6 @@
 	<link rel="stylesheet" href="<?=base_url('assets/css/themify-icons.css')?>">
 	<!-- Feathericon CSS -->
     <link rel="stylesheet" href="<?=base_url('assets/admin/css/feathericon.min.css')?>">	
-	<link rel="stylesheet" href="<?=base_url('assets/admin/plugins/morris/morris.css')?>">	
 	<!-- Main CSS -->
 	<link rel="stylesheet" href="<?=base_url('assets/css/dimension.css')?>">
     <link rel="stylesheet" href="<?=base_url('assets/admin/css/style.css')?>">

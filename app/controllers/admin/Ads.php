@@ -6,7 +6,10 @@ class Ads extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('admin/Ads_model');
-        $this->admin_auth->require_admin();
+        $isAjax = $this->input->is_ajax_request() 
+            || (strpos((string)$this->uri->uri_string(), 'approve_ad') !== false) 
+            || (strpos((string)$this->uri->uri_string(), 'reject_ad') !== false);
+        $this->admin_auth->require_admin(null, $isAjax);
         $this->userToken = $this->session->userdata('24ads_ad_user_idetification');
         $this->userID = $this->admin_auth->get_admin_id() ? $this->admin_auth->get_admin_id() : getAdminUserID($this->userToken);
     }
@@ -186,76 +189,101 @@ class Ads extends CI_Controller {
      * AJAX Endpoint: Approve & Activate Advertisement
      */
     public function approve_ad() {
-        // Enforce authorization
-        $this->admin_auth->require_admin('approve_ads', true);
+        try {
+            // Enforce authorization
+            $this->admin_auth->require_admin('approve_ads', true);
 
-        // Verify CSRF
-        if (!$this->admin_auth->verify_csrf_token()) {
-            echo json_encode([
+            // Verify CSRF
+            if (!$this->admin_auth->verify_csrf_token()) {
+                $this->output->set_content_type('application/json')->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'CSRF verification failed or security token expired. Please refresh the page.'
+                ]));
+                return;
+            }
+
+            $adId = (int)$this->input->post('ads_id');
+            if (empty($adId)) {
+                $adId = (int)$this->input->post('ads');
+            }
+
+            if (empty($adId)) {
+                $this->output->set_content_type('application/json')->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Invalid advertisement identifier.'
+                ]));
+                return;
+            }
+
+            $comment = trim((string)$this->input->post('approval_comment'));
+            $adminId = $this->admin_auth->get_admin_id() ?: $this->userID;
+
+            $result = $this->Ads_model->approve_ad($adId, $adminId, $comment);
+            $result['csrf_token'] = $this->admin_auth->get_csrf_token(true);
+
+            $this->output->set_content_type('application/json')->set_output(json_encode($result));
+        } catch (\Throwable $e) {
+            log_message('error', 'approve_ad exception: ' . $e->getMessage());
+            $this->output->set_content_type('application/json')->set_output(json_encode([
                 'success' => false,
-                'message' => 'CSRF verification failed or security token expired. Please refresh the page.'
-            ]);
-            return;
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ]));
         }
-
-        $adId = (int)$this->input->post('ads_id');
-        if (empty($adId)) {
-            $adId = (int)$this->input->post('ads');
-        }
-
-        if (empty($adId)) {
-            echo json_encode(['success' => false, 'message' => 'Invalid advertisement identifier.']);
-            return;
-        }
-
-        $comment = trim($this->input->post('approval_comment'));
-        $adminId = $this->admin_auth->get_admin_id() ?: $this->userID;
-
-        $result = $this->Ads_model->approve_ad($adId, $adminId, $comment);
-        $result['csrf_token'] = $this->admin_auth->get_csrf_token(true);
-
-        $this->output->set_content_type('application/json')->set_output(json_encode($result));
     }
 
     /**
      * AJAX Endpoint: Reject Advertisement
      */
     public function reject_ad() {
-        // Enforce authorization
-        $this->admin_auth->require_admin('reject_ads', true);
+        try {
+            // Enforce authorization
+            $this->admin_auth->require_admin('reject_ads', true);
 
-        // Verify CSRF
-        if (!$this->admin_auth->verify_csrf_token()) {
-            echo json_encode([
+            // Verify CSRF
+            if (!$this->admin_auth->verify_csrf_token()) {
+                $this->output->set_content_type('application/json')->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'CSRF verification failed or security token expired. Please refresh the page.'
+                ]));
+                return;
+            }
+
+            $adId = (int)$this->input->post('ads_id');
+            if (empty($adId)) {
+                $adId = (int)$this->input->post('ads');
+            }
+
+            $reason = trim((string)$this->input->post('rejected_reason'));
+
+            if (empty($adId)) {
+                $this->output->set_content_type('application/json')->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Invalid advertisement identifier.'
+                ]));
+                return;
+            }
+
+            if (empty($reason)) {
+                $this->output->set_content_type('application/json')->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Rejection reason is required. Please specify why this ad is being rejected.'
+                ]));
+                return;
+            }
+
+            $adminId = $this->admin_auth->get_admin_id() ?: $this->userID;
+
+            $result = $this->Ads_model->reject_ad($adId, $adminId, $reason);
+            $result['csrf_token'] = $this->admin_auth->get_csrf_token(true);
+
+            $this->output->set_content_type('application/json')->set_output(json_encode($result));
+        } catch (\Throwable $e) {
+            log_message('error', 'reject_ad exception: ' . $e->getMessage());
+            $this->output->set_content_type('application/json')->set_output(json_encode([
                 'success' => false,
-                'message' => 'CSRF verification failed or security token expired. Please refresh the page.'
-            ]);
-            return;
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ]));
         }
-
-        $adId = (int)$this->input->post('ads_id');
-        if (empty($adId)) {
-            $adId = (int)$this->input->post('ads');
-        }
-
-        $reason = trim($this->input->post('rejected_reason'));
-
-        if (empty($adId)) {
-            echo json_encode(['success' => false, 'message' => 'Invalid advertisement identifier.']);
-            return;
-        }
-
-        if (empty($reason)) {
-            echo json_encode(['success' => false, 'message' => 'Rejection reason is required. Please specify why this ad is being rejected.']);
-            return;
-        }
-
-        $adminId = $this->admin_auth->get_admin_id() ?: $this->userID;
-
-        $result = $this->Ads_model->reject_ad($adId, $adminId, $reason);
-        $result['csrf_token'] = $this->admin_auth->get_csrf_token(true);
-
-        $this->output->set_content_type('application/json')->set_output(json_encode($result));
     }
 
     /**

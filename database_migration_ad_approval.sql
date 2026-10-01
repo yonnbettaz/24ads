@@ -32,6 +32,18 @@ CREATE TABLE IF NOT EXISTS `tbl_login_attempts` (
   INDEX `idx_attempt_time` (`attempt_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 2b. Ensure z_audit_trails table exists for system legacy trails
+CREATE TABLE IF NOT EXISTS `z_audit_trails` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `action_table` VARCHAR(100) NOT NULL,
+  `primary_key_table` VARCHAR(100) NOT NULL,
+  `description` TEXT NULL,
+  `action_by` VARCHAR(100) NULL,
+  `action_date` VARCHAR(100) NOT NULL,
+  INDEX `idx_action_table` (`action_table`),
+  INDEX `idx_primary_key` (`primary_key_table`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 3. Ensure all approval workflow columns exist in tbl_ads
 -- Note: tbl_ads already had ads_status, enabled_by, enabled_date, rejected_by, rejected_date, rejected_reason
 ALTER TABLE `tbl_ads` 
