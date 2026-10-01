@@ -88,6 +88,9 @@ class Personal extends CI_Controller {
 
     public function profile(){
         $data['title'] = 'User Profile - 24ads';
+        $userID = getUserID($this->userToken);
+        $this->load->model('Users_model');
+        $data['info'] = $this->Users_model->account_info($userID, 'personal');
         $this->setView('profile', $data);
     }
 

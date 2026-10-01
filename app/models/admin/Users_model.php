@@ -220,52 +220,32 @@
 		}
 
     	public function login($username, $password){
-		    $this->db->where('username', $username); 
-		   	$this->db->where('password', $password);
-		   	$query = $this->db->get('tbl_admin');
-		   	if(!empty($query->row_array())){
-		   		$token=generateToken();
-				$this->db->set('token', $token);
-				$this->db->where('username', $username);
-				$this->db->where('password', $password);
-				$this->db->where('status', '0');
-		     	$this->db->update('tbl_admin');
-	        	$full_name=""; $admin_id="";
-	            foreach ($query->result_array() as $data) {
-	                $admin_id=$data['id'];
-	            }
-
-            	$user_avatar="";
-            	$this->db->where('admin_id', $admin_id);
-            	$this->db->where('status', '0');
-            	$query = $this->db->get('tbl_admin_info');
-            	foreach ($query->result_array() as $data){
-	                $full_name=$data['name'];
-	                if($data['avatar']!=""){ $user_avatar=$data['avatar'];}else{ $user_avatar="default.png";}
-	            }
-			   		     	
-	        	$this->session->set_userdata('24ads_ad_user_idetification', $token);
-				$this->session->set_userdata('user_full_name', $full_name);
-				$this->session->set_userdata('user_avatar', $user_avatar);
-	        	return 'Success';
-		   	}else{
-		   		return ErrorMsg('Incorrect username or password');
-		 	}
+            $this->load->library('admin_auth');
+            $auth = $this->admin_auth->login($username, $password);
+            if($auth['success']){
+                return 'Success';
+            }else{
+                return ErrorMsg($auth['message']);
+            }
 		}
 
 		public function change_password($userID, $cpassword, $password){
+            $this->load->library('admin_auth');
 			$this->db->where('id', $userID); 
-		   	$this->db->where('password', $cpassword);
 		   	$this->db->where('status', '0');
 		   	$query = $this->db->get('tbl_admin');
-		   	if(!empty($query->row_array())){
-				$this->db->set('password', $password);
+		   	if($query->num_rows() > 0){
+                $admin = $query->row_array();
+                if(!$this->admin_auth->verify_password($cpassword, $admin['password'], $userID)){
+                    return ErrorMsg("Incorrect Current Password");
+                }
+                $newHash = $this->admin_auth->hash_password($password);
+				$this->db->set('password', $newHash);
 				$this->db->where('id', $userID);
-				$this->db->where('password', $cpassword);
 		     	$this->db->update('tbl_admin');
-	        	echo 'Success';
+	        	return 'Success';
 		    }else{
-		   		echo ErrorMsg("Incorrect Current Password");
+		   		return ErrorMsg("Administrator account not found");
 		 	}
 		}
 

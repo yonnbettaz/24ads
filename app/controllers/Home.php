@@ -53,14 +53,48 @@ class Home extends CI_Controller {
             $this->session->set_userdata('current_read_ads', $ads_id);
         }
         $data['info'] = $this->Home_model->load_ads_content($ads_id);
+        if(empty($data['info'])){
+            $this->session->set_flashdata('error', 'The requested advertisement was not found.');
+            redirect('home');
+            return;
+        }
+
+        $ad_row = $data['info'][0];
+        $userID = getUserID($this->userToken);
+
+        // Security / Visibility check: Only ACTIVE ads (ads_status == 1) are visible to normal/public visitors.
+        // Admins and the ad creator business can preview non-active ads.
+        if($ad_row['ads_status'] != '1'){
+            $is_admin = $this->admin_auth->is_logged_in();
+            $is_owner = false;
+
+            if($this->session->userdata('account_type') == 'business'){
+                $this->load->model('business/Business_model');
+                $business_info = $this->Business_model->get_business_info($userID);
+                if(!empty($business_info) && isset($business_info['id']) && $business_info['id'] == $ad_row['business_id']){
+                    $is_owner = true;
+                }
+            }
+
+            if(!$is_admin && !$is_owner){
+                $this->session->set_flashdata('error', 'This advertisement is currently under review or inactive and cannot be viewed publicly.');
+                redirect('home');
+                return;
+            }
+
+            $data['is_preview_mode'] = true;
+            $data['preview_notice'] = ($ad_row['ads_status'] == '2') 
+                ? 'Preview Mode: This advertisement is currently PENDING review.' 
+                : (($ad_row['ads_status'] == '3') ? 'Preview Mode: This advertisement is currently REJECTED.' : 'Preview Mode: This advertisement is CLOSED.');
+        }
+
         $data['related_ads'] = $this->Home_model->load_related_ads($ads_id, 4);
         $data['total_questions'] = $this->Home_model->get_total_questions($ads_id);
 
         $ad_title = (!empty($data['info']) && isset($data['info'][0]['title'])) ? $data['info'][0]['title'] : 'Ad Story';
         $data['title'] = $ad_title . ' - 24ads';
 
-        $userID = getUserID($this->userToken);
-        if(!empty($ads_id) && !empty($userID)){
+        if(!empty($ads_id) && !empty($userID) && $ad_row['ads_status'] == '1'){
             $update = $this->Home_model->update_clicked_ads($ads_id, $userID, "", "", "");
         }
         $this->setView('ads_content', $data);
@@ -68,24 +102,33 @@ class Home extends CI_Controller {
 
     public function ads_questions(){
         $data['title'] = 'Ads Question - 24ads';
-        $user_data=$this->input->get();
-        $ads_id=""; $questions=array(); $user_question_time=0;
-        if(isset($user_data['ads']) && $user_data['ads']!=""){
-            $ads_id=$user_data['ads'];
+        $user_data = $this->input->get();
+        $ads_id = ""; $questions = array(); $user_question_time = 0;
+        if(isset($user_data['ads']) && $user_data['ads'] != ""){
+            $ads_id = $user_data['ads'];
             $this->session->set_userdata('current_read_ads', $ads_id);
         }
-        $userID=getUserID($this->userToken);
-        if($userID!=""){
-            $user_question_time=$this->Home_model->get_user_ads_current_time($ads_id, $userID);
-            $questions=$this->Home_model->load_ads_questions($ads_id, $userID, "", "");
+
+        // Ads must be ACTIVE for questions
+        $check_ad = $this->Home_model->load_ads_content($ads_id);
+        if(empty($check_ad) || $check_ad[0]['ads_status'] != '1'){
+            $this->session->set_flashdata('error', 'Participation is only available for approved active advertisements.');
+            redirect('home');
+            return;
         }
-        $question_time=$this->Home_model->get_ads_question_time($ads_id);
-        $data['question_time']=$question_time;
-        $data['user_question_time']=$user_question_time;
-        $data['bonuses']=$this->Home_model->get_total_bonuses($ads_id);
-        $data['total_questions']=$this->Home_model->get_total_questions($ads_id);
-        $data['questions']=$questions;
-        $data['ads']=$ads_id;
+
+        $userID = getUserID($this->userToken);
+        if($userID != ""){
+            $user_question_time = $this->Home_model->get_user_ads_current_time($ads_id, $userID);
+            $questions = $this->Home_model->load_ads_questions($ads_id, $userID, "", "");
+        }
+        $question_time = $this->Home_model->get_ads_question_time($ads_id);
+        $data['question_time'] = $question_time;
+        $data['user_question_time'] = $user_question_time;
+        $data['bonuses'] = $this->Home_model->get_total_bonuses($ads_id);
+        $data['total_questions'] = $this->Home_model->get_total_questions($ads_id);
+        $data['questions'] = $questions;
+        $data['ads'] = $ads_id;
         $this->setView('ads_questions', $data);
     }
 

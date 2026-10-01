@@ -175,7 +175,6 @@ class Users extends CI_Controller {
     	$this->form_validation->set_rules('username', 'Username', 'trim|required');
    		$this->form_validation->set_rules('password', 'Password', 'trim|required');
    		$this->form_validation->set_message('required', 'Please Fill %s.');
-   		$data = array();
 
    		if ($this->form_validation->run() === FALSE){
 	        if(form_error('username')!=""){
@@ -185,30 +184,30 @@ class Users extends CI_Controller {
 	        }
 	    }else{
 	    	$data = $this->input->post();
-			
-			$username=$data['username'];
-			$password=sha1(md5(md5($data['password'])));
+			$csrf_token = $data[$this->admin_auth->get_csrf_token_name()] ?? '';
+			if(!empty($csrf_token) && !$this->admin_auth->verify_csrf_token($csrf_token)){
+				die(ErrorMsg('Security token validation failed. Please refresh the page and try again.'));
+			}
 
-	        $check=$this->Users_model->login($username, $password);
+			$username = trim($data['username']);
+			$password = $data['password'];
+
+	        $check = $this->Users_model->login($username, $password);
 	        echo $check;
 	    }
 	}
 
 	public function change_password(){
-		if($this->userToken=="" || $this->userToken==null || empty($this->userToken)){
-			die(ErrorMsg('Session expired refresh the page...'));
-		}
+		$this->admin_auth->require_admin(null, true);
         $this->load->helper('form');
     	$this->load->library('form_validation');
 
     	$this->form_validation->set_error_delimiters(errMsg(), '</div>');
     	$this->form_validation->set_rules('cpassword', 'Current Password', 'trim|required');
    		$this->form_validation->set_rules('repassword', 'Re-Enter Password', 'trim|required');
-   		$this->form_validation->set_rules('password', 'New Password', 'trim|required');
-   		$data = array();
+   		$this->form_validation->set_rules('password', 'New Password', 'trim|required|min_length[6]');
 
    		if ($this->form_validation->run() === FALSE){
-	        // die(validation_errors());
 	        if(form_error('cpassword')!=""){
 	        	die(form_error('cpassword'));
 	        }elseif(form_error('password')!=""){
@@ -218,41 +217,43 @@ class Users extends CI_Controller {
 	        }
 	    }else{
 	    	$data = $this->input->post();			
-			$cpassword=$data['cpassword'];
-			$repassword=$data['repassword'];
-			$password=$data['password'];
-			$pass=sha1(md5(md5($password)));
-			$cpass=sha1(md5(md5($cpassword)));
+			$cpassword = $data['cpassword'];
+			$repassword = $data['repassword'];
+			$password = $data['password'];
 
-			if($password!=$repassword){
-				die(errorMsg("Sorry! Your New Password Does Not Match"));
+			if($password !== $repassword){
+				die(ErrorMsg("Sorry! Your New Password Does Not Match"));
 			}
-			$userID=getAdminUserID($this->userToken);
-	        $check=$this->Users_model->change_password($userID, $cpass, $pass);
+			$userID = $this->admin_auth->get_admin_id();
+			if(!$userID){
+				$userID = getAdminUserID($this->userToken);
+			}
+	        $check = $this->Users_model->change_password($userID, $cpassword, $password);
         	echo $check;
 	    }
 	}
 
     public function profile(){
+		$this->admin_auth->require_admin();
         $data['title'] = 'Admin Profile - 24ads';
-		$userID=getAdminUserID($this->userToken);
-        $data['info']=$this->Users_model->account_info($userID);
+		$userID = $this->admin_auth->get_admin_id();
+		if(!$userID){
+			$userID = getAdminUserID($this->userToken);
+		}
+        $data['info'] = $this->Users_model->account_info($userID);
         $this->load->view('includes/admin_header.php', $data);
         $this->load->view('admin/profile');
         $this->load->view('includes/admin_footer.php');
     }
 
     public function update_profile(){
-		if($this->userToken=="" || $this->userToken==null || empty($this->userToken)){
-			die(ErrorMsg('Session expired refresh the page...'));
-		}
+		$this->admin_auth->require_admin(null, true);
 
     	$this->form_validation->set_error_delimiters(errMsg(), '</div>');
     	$this->form_validation->set_rules('name', 'Name', 'trim|required');
    		$this->form_validation->set_rules('gender', 'Gender', 'trim|required');
    		$this->form_validation->set_rules('phone', 'Phone', 'trim|required');
    		$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-   		$data = array();
 
    		if ($this->form_validation->run() === FALSE){
 	        if(form_error('name')!=""){
@@ -266,23 +267,22 @@ class Users extends CI_Controller {
 	        }
 	    }else{
 	    	$user_data = $this->input->post();
-			$userID=getAdminUserID($this->userToken);
-	        $check=$this->Users_model->update_profile($user_data, $userID);
+			$userID = $this->admin_auth->get_admin_id();
+			if(!$userID){
+				$userID = getAdminUserID($this->userToken);
+			}
+	        $check = $this->Users_model->update_profile($user_data, $userID);
         	echo $check;
 	    }
 	}
 
 	public function logout(){
-        unset($_SESSION['24ads_ad_user_idetification']);
-        $this->session->sess_destroy();
+        $this->admin_auth->logout();
         redirect('admin/users/login');
     }
 
     public function is_logged_in(){
-        $is_logged_in = $this->session->userdata('24ads_ad_user_idetification');
-        if ($is_logged_in != TRUE) {
-            redirect('admin/users/login');
-        }
+        $this->admin_auth->require_admin();
     }
     /*end user logs*/
 }

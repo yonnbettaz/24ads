@@ -23,6 +23,15 @@ $ad = (!empty($info) && is_array($info)) ? $info[0] : null;
 
 <div class="content" style="padding-bottom: 60px;">
 	<div class="container-fluid">
+		<?php if(!empty($is_preview_mode)){ ?>
+			<div class="alert alert-warning border-0 shadow-sm mb-4 font-weight-700 d-flex align-items-center" style="border-radius: 12px; background: #fffbeb; color: #b45309; border-left: 5px solid #f59e0b !important;">
+				<i class="fas fa-exclamation-triangle fa-lg mr-3"></i>
+				<div>
+					<span><?=htmlspecialchars($preview_notice ?? 'Preview Mode')?></span>
+					<span class="d-block small text-muted font-weight-normal">This advertisement is hidden from public listings and can only be seen by administrators or the campaign owner.</span>
+				</div>
+			</div>
+		<?php } ?>
 		<?php if(!empty($ad)){ 
 			$banner_img = (!empty($ad['banner']) && file_exists(FCPATH.'media/banner/'.$ad['banner']))
 				? base_url('media/banner/'.$ad['banner'])

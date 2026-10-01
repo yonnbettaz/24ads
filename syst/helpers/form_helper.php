@@ -1074,3 +1074,193 @@ if ( ! function_exists('_get_validation_object'))
         return $return;
     }
 }
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('set_value'))
+{
+    /**
+     * Form Value
+     *
+     * Grabs a value from the POST array for the specified field so you can
+     * re-populate an input field or textarea. If Form Validation class is loaded
+     * it retrieves the value from that class, otherwise it retrieves the value
+     * from the POST array.
+     *
+     * @param   string  $field
+     * @param   string  $default
+     * @param   bool    $escape
+     * @return  string
+     */
+    function set_value($field, $default = '', $escape = TRUE)
+    {
+        $CI =& get_instance();
+
+        $value = (isset($CI->form_validation) && is_object($CI->form_validation) && count($CI->form_validation->error_array()) > 0)
+            ? $CI->form_validation->set_value($field, $default)
+            : $CI->input->post($field, FALSE);
+
+        isset($value) OR $value = $default;
+        return ($escape === TRUE && function_exists('html_escape')) ? html_escape($value) : htmlspecialchars((string)$value);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('set_select'))
+{
+    /**
+     * Set Select
+     *
+     * Let's you set the selected value of a <select> menu via data in the POST array.
+     *
+     * @param   string
+     * @param   string
+     * @param   bool
+     * @return  string
+     */
+    function set_select($field, $value = '', $default = FALSE)
+    {
+        $CI =& get_instance();
+
+        if (isset($CI->form_validation) && is_object($CI->form_validation) && count($CI->form_validation->error_array()) > 0)
+        {
+            return $CI->form_validation->set_select($field, $value, $default);
+        }
+
+        if (($input = $CI->input->post($field, FALSE)) === NULL)
+        {
+            return ($default === TRUE) ? ' selected="selected"' : '';
+        }
+
+        $value = (string) $value;
+        if (is_array($input))
+        {
+            foreach ($input as &$val)
+            {
+                if ($value === (string) $val)
+                {
+                    return ' selected="selected"';
+                }
+            }
+            return '';
+        }
+
+        return ($input === $value) ? ' selected="selected"' : '';
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('set_checkbox'))
+{
+    /**
+     * Set Checkbox
+     *
+     * Let's you set the selected value of a checkbox via the value in the POST array.
+     *
+     * @param   string
+     * @param   string
+     * @param   bool
+     * @return  string
+     */
+    function set_checkbox($field, $value = '', $default = FALSE)
+    {
+        $CI =& get_instance();
+
+        if (isset($CI->form_validation) && is_object($CI->form_validation) && count($CI->form_validation->error_array()) > 0)
+        {
+            return $CI->form_validation->set_checkbox($field, $value, $default);
+        }
+
+        if (($input = $CI->input->post($field, FALSE)) === NULL)
+        {
+            return ($default === TRUE) ? ' checked="checked"' : '';
+        }
+
+        $value = (string) $value;
+        if (is_array($input))
+        {
+            foreach ($input as &$val)
+            {
+                if ($value === (string) $val)
+                {
+                    return ' checked="checked"';
+                }
+            }
+            return '';
+        }
+
+        return ($input === $value) ? ' checked="checked"' : '';
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('set_radio'))
+{
+    /**
+     * Set Radio
+     *
+     * Let's you set the selected value of a radio field via info in the POST array.
+     *
+     * @param   string
+     * @param   string
+     * @param   bool
+     * @return  string
+     */
+    function set_radio($field, $value = '', $default = FALSE)
+    {
+        return set_checkbox($field, $value, $default);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('form_error'))
+{
+    /**
+     * Form Error
+     *
+     * Returns the error for a specific form field.
+     *
+     * @param   string
+     * @param   string
+     * @param   string
+     * @return  string
+     */
+    function form_error($field = '', $prefix = '', $suffix = '')
+    {
+        if (false === ($OBJ =& _get_validation_object()))
+        {
+            return '';
+        }
+
+        return $OBJ->error($field, $prefix, $suffix);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('validation_errors'))
+{
+    /**
+     * Validation Errors
+     *
+     * Creates a string containing the full list of errors.
+     *
+     * @param   string
+     * @param   string
+     * @return  string
+     */
+    function validation_errors($prefix = '', $suffix = '')
+    {
+        if (false === ($OBJ =& _get_validation_object()))
+        {
+            return '';
+        }
+
+        return $OBJ->error_string($prefix, $suffix);
+    }
+}
+

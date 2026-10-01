@@ -3,56 +3,142 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-        <title>24ads - Login</title>		
+        <title>24ads - Administrator Portal</title>		
 		<!-- Favicon -->
         <link rel="shortcut icon" type="image/x-icon" href="<?=base_url('assets/themes/logo.png')?>">
 		<!-- Bootstrap CSS -->
         <link rel="stylesheet" href="<?=base_url('assets/admin/css/bootstrap.min.css')?>">		
 		<!-- Fontawesome CSS -->
         <link rel="stylesheet" href="<?=base_url('assets/admin/css/font-awesome.min.css')?>">		
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 		<!-- Main CSS -->
         <link rel="stylesheet" href="<?=base_url('assets/admin/css/style.css')?>">		
         <link rel="stylesheet" href="<?=base_url('assets/admin/css/admin.css')?>">		
-		<!--[if lt IE 9]>
-			<script src="assets/js/html5shiv.min.js"></script>
-			<script src="assets/js/respond.min.js"></script>
-		<![endif]-->
+        <style>
+            body {
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            }
+            .admin-login-card {
+                background: #ffffff;
+                border-radius: 20px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+                overflow: hidden;
+                width: 100%;
+                max-width: 440px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .admin-login-header {
+                background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+                padding: 35px 30px;
+                text-align: center;
+                color: #ffffff;
+            }
+            .admin-login-body {
+                padding: 35px 30px;
+            }
+            .form-control-custom {
+                border-radius: 10px;
+                height: 48px;
+                padding-left: 45px;
+                border: 1.5px solid #e2e8f0;
+                font-size: 14px;
+                transition: all 0.2s ease;
+            }
+            .form-control-custom:focus {
+                border-color: #4f46e5;
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            }
+            .input-icon {
+                position: absolute;
+                left: 16px;
+                top: 15px;
+                color: #94a3b8;
+                font-size: 16px;
+                z-index: 5;
+            }
+            .btn-login {
+                background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+                border: none;
+                border-radius: 10px;
+                height: 48px;
+                font-weight: 700;
+                font-size: 15px;
+                letter-spacing: 0.3px;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
+            }
+            .btn-login:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 16px rgba(79, 70, 229, 0.45);
+            }
+            .badge-security {
+                display: inline-flex;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.18);
+                color: #ffffff;
+                font-size: 11.5px;
+                font-weight: 600;
+                padding: 4px 12px;
+                border-radius: 50px;
+                margin-top: 10px;
+                letter-spacing: 0.5px;
+            }
+        </style>
     </head>
     <body>
 	
-		<!-- Main Wrapper -->
-        <div class="main-wrapper login-body">
-            <div class="login-wrapper">
-            	<div class="container">
-                	<div class="loginbox">
-                    	<div class="login-left">
-							<img class="img-fluid" src="<?=base_url('assets/themes/logo_white.png')?>" alt="Logo">
-                        </div>
-                        <div class="login-right">
-							<div class="login-right-wrap">
-								<h1>Login</h1>
-								<p class="account-subtitle">24ads Dashboard</p>
-								<form amethod="post" id="login-form">
-									<div class="form-group">
-										<input class="form-control" type="text" name="username" placeholder="Enter your username">
-									</div>
-									<div class="form-group">
-										<input class="form-control" type="password" name="password" placeholder="************" id="passwordField">
-									</div>
-									<div class="form-group">									
-					                    <a class="btn btn-primary btn-block turnOnLoginProgress" onclick="loginPopup();">Login</a>
-					                    <a class="btn btn-primary btn-block progressBarLoginBtn"><i class="fa fa-spinner fa-spin"></i> Processing...</a>
-									</div>
-								</form>
-                    			<div class="row"><div class="col-md-12" id="resultMsgLogin"></div></div>
-								<div class="text-center forgotpass"><a href="javascript:void();" onclick="alert('Contac top admin');">Forgot Password?</a></div>
-							</div>
+        <div class="container py-4">
+            <div class="d-flex justify-content-center">
+                <div class="admin-login-card">
+                    <div class="admin-login-header">
+                        <img src="<?=base_url('assets/themes/logo_white.png')?>" alt="24ads Logo" style="height: 38px; margin-bottom: 12px;">
+                        <h4 class="font-weight-bold text-white mb-0" style="font-size: 20px;">Administrator Portal</h4>
+                        <span class="badge-security">
+                            <i class="fas fa-shield-alt mr-1"></i> Ad Approval & Management
+                        </span>
+                    </div>
+
+                    <div class="admin-login-body">
+                        <form method="post" id="login-form">
+                            <!-- CSRF Security Token -->
+                            <input type="hidden" name="<?=$this->admin_auth->get_csrf_token_name()?>" value="<?=$this->admin_auth->get_csrf_token()?>">
+
+                            <div class="form-group position-relative mb-3">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input class="form-control form-control-custom" type="text" name="username" placeholder="Username or Email" required autofocus>
+                            </div>
+
+                            <div class="form-group position-relative mb-4">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input class="form-control form-control-custom" type="password" name="password" placeholder="Password" id="passwordField" required>
+                            </div>
+
+                            <div class="form-group mb-3">									
+                                <button type="button" class="btn btn-primary btn-block btn-login turnOnLoginProgress" onclick="loginPopup();">
+                                    <i class="fas fa-sign-in-alt mr-2"></i> Sign In to Dashboard
+                                </button>
+                                <button type="button" class="btn btn-primary btn-block btn-login progressBarLoginBtn" style="display: none;" disabled>
+                                    <i class="fa fa-spinner fa-spin mr-2"></i> Verifying Credentials...
+                                </button>
+                            </div>
+                        </form>
+
+                        <div id="resultMsgLogin" class="mt-3"></div>
+
+                        <div class="text-center mt-4 pt-3 border-top">
+                            <a href="<?=base_url()?>" class="text-muted small font-weight-600">
+                                <i class="fas fa-arrow-left mr-1"></i> Back to Public Website
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-		<!-- /Main Wrapper -->
 		
 		<!-- jQuery -->
         <script src="<?=base_url('assets/admin/js/jquery-3.2.1.min.js')?>"></script>

@@ -111,6 +111,113 @@
 	    </div>
 	    <!-- /Change Password Modal -->
 
+	    <!-- /Change Password Modal -->
+
+        <!-- Approve & Activate Confirmation Modal (Requirement 7) -->
+        <div class="modal fade" id="approve_ad_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px;">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                    <div class="modal-header border-0 pb-2 pt-4 px-4" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #ffffff;">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3" style="width: 46px; height: 46px; border-radius: 12px; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                                <i class="fa fa-check-circle text-white"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title font-weight-800 text-white mb-0" style="font-size: 18px;">Approve Advertisement</h5>
+                                <small class="text-white-50">Publish campaign to public viewers</small>
+                            </div>
+                        </div>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.8;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="p-3 rounded mb-3" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+                            <p class="font-weight-700 text-dark mb-1" style="font-size: 14.5px;">Are you sure you want to approve this advertisement?</p>
+                            <p class="text-muted small mb-0">This will make the advertisement visible to all active users on the platform.</p>
+                            <div class="mt-2 font-weight-600 text-success small" id="approve_ad_title"></div>
+                        </div>
+                        <form id="approve_ad_form">
+                            <input type="hidden" name="ads_id" id="approve_ad_id">
+                            <input type="hidden" name="admin_csrf_token" id="approve_csrf_token" value="<?=$this->admin_auth->get_csrf_token()?>">
+                            <div class="form-group mb-0">
+                                <label class="font-weight-700 text-dark small mb-1">Approval Comment / Note <span class="text-muted font-weight-normal">(Optional)</span></label>
+                                <textarea name="approval_comment" id="approve_ad_comment" class="form-control" rows="2" placeholder="e.g., Advertisement reviewed and verified. Meets community guidelines." style="border-radius: 8px; font-size: 13px;"></textarea>
+                            </div>
+                        </form>
+                        <div id="approve_modal_alert" class="mt-3"></div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light px-4 py-3">
+                        <button type="button" class="btn btn-light font-weight-600 px-3" data-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+                        <button type="button" class="btn btn-success font-weight-700 px-4" id="btnConfirmApprove" onclick="executeApproveAd()" style="border-radius: 8px;">
+                            <i class="fa fa-check-circle mr-1"></i> Approve & Activate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reject Advertisement Modal (Requirement 8) -->
+        <div class="modal fade" id="reject_ad_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px;">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                    <div class="modal-header border-0 pb-2 pt-4 px-4" style="background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%); color: #ffffff;">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3" style="width: 46px; height: 46px; border-radius: 12px; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                                <i class="fa fa-times-circle text-white"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title font-weight-800 text-white mb-0" style="font-size: 18px;">Reject Advertisement</h5>
+                                <small class="text-white-50">Specify feedback for the advertiser</small>
+                            </div>
+                        </div>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.8;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <p class="text-muted small mb-2">Campaign: <strong class="text-dark" id="reject_ad_title"></strong></p>
+                        <form id="reject_ad_form">
+                            <input type="hidden" name="ads_id" id="reject_ad_id">
+                            <input type="hidden" name="admin_csrf_token" id="reject_csrf_token" value="<?=$this->admin_auth->get_csrf_token()?>">
+                            <div class="form-group mb-0">
+                                <label class="font-weight-700 text-dark small mb-1">
+                                    Rejection Reason <span class="text-danger">* (Mandatory)</span>
+                                </label>
+                                <textarea name="rejected_reason" id="reject_ad_reason" class="form-control" rows="3" required placeholder="Please provide specific feedback explaining why this ad is being rejected..." style="border-radius: 8px; font-size: 13.5px;"></textarea>
+                                <small class="text-muted mt-1 d-block">The advertiser will see this reason in their portal so they can revise and resubmit the advertisement.</small>
+                            </div>
+                        </form>
+                        <div id="reject_modal_alert" class="mt-3"></div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light px-4 py-3">
+                        <button type="button" class="btn btn-light font-weight-600 px-3" data-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+                        <button type="button" class="btn btn-danger font-weight-700 px-4" id="btnConfirmReject" onclick="executeRejectAd()" style="border-radius: 8px;">
+                            <i class="fa fa-times-circle mr-1"></i> Reject Advertisement
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lightbox Full Image Preview Modal -->
+        <div class="modal fade" id="image_lightbox_modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content border-0 shadow-lg bg-dark text-white" style="border-radius: 16px; overflow: hidden;">
+                    <div class="modal-header border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                        <h6 class="modal-title font-weight-700 text-white mb-0" id="lightbox_caption">Banner Inspection</h6>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.9;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-0 text-center" style="background: #0b0f19;">
+                        <img src="" id="lightbox_image" alt="Full Image" class="img-fluid" style="max-height: 80vh; width: auto; object-fit: contain;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legacy compatibility modal for deny_ads -->
         <div class="modal fade" id="deny_ads" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -123,14 +230,14 @@
                         <form method="post" id="deny-form">
                             <div class="form-group">
                                 <input type="hidden" name="ads" id="ads_fld" class="form-control">
-                                <textarea class="form-control" name="rejected_reason"></textarea>
+                                <textarea class="form-control" name="rejected_reason" placeholder="Enter rejection reason"></textarea>
                             </div>
                         </form>
                         <div class="row"><div class="col-md-12" id="resultMsgDeny"></div></div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn btn-info btn-sm text-white waves-effect waves-light turnOnChangePassProgress" id="saveReject">Submit</a>
-                        <a class="btn btn-info btn-sm text-white waves-light progressBarChangePassBtn"><i class="fa fa-spinner fa-spin"></i> Processing...</a>
+                        <a class="btn btn-danger btn-sm text-white waves-effect waves-light turnOnChangePassProgress" id="saveReject">Submit</a>
+                        <a class="btn btn-danger btn-sm text-white waves-light progressBarChangePassBtn"><i class="fa fa-spinner fa-spin"></i> Processing...</a>
                     </div>
                 </div>
             </div>
@@ -482,5 +589,108 @@
                 icon.classList.add("fa-eye");
             }
         }
+    }
+
+    /* Modern Advertisement Approval & Rejection Workflows */
+    function openApproveModal(adId, title){
+        $('#approve_ad_id').val(adId);
+        $('#approve_ad_title').html('Campaign: #' + adId + ' - ' + title);
+        $('#approve_ad_comment').val('');
+        $('#approve_modal_alert').html('');
+        $('#btnConfirmApprove').prop('disabled', false).html('<i class="fa fa-check-circle mr-1"></i> Approve & Activate');
+        $('#approve_ad_modal').modal('show');
+    }
+
+    function executeApproveAd(){
+        var form = $('#approve_ad_form');
+        var btn = $('#btnConfirmApprove');
+        var alertBox = $('#approve_modal_alert');
+        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin mr-1"></i> Approving & Activating...');
+
+        $.ajax({
+            url: '<?=base_url("admin/ads/approve_ad")?>',
+            type: 'POST',
+            data: form.serialize(),
+            dataType: 'json',
+            success: function(res){
+                if(res.csrf_token){
+                    $('#approve_csrf_token').val(res.csrf_token);
+                    $('#reject_csrf_token').val(res.csrf_token);
+                }
+                if(res.success){
+                    alertBox.html('<div class="alert alert-success border-0 py-2 small mb-0"><i class="fa fa-check-circle mr-1"></i> ' + res.message + '</div>');
+                    setTimeout(function(){
+                        $('#approve_ad_modal').modal('hide');
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    btn.prop('disabled', false).html('<i class="fa fa-check-circle mr-1"></i> Approve & Activate');
+                    alertBox.html('<div class="alert alert-danger border-0 py-2 small mb-0"><i class="fa fa-exclamation-triangle mr-1"></i> ' + (res.message || 'Error occurred.') + '</div>');
+                }
+            },
+            error: function(xhr, status, error){
+                btn.prop('disabled', false).html('<i class="fa fa-check-circle mr-1"></i> Approve & Activate');
+                var errMsg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Error communicating with server.';
+                alertBox.html('<div class="alert alert-danger border-0 py-2 small mb-0"><i class="fa fa-exclamation-triangle mr-1"></i> ' + errMsg + '</div>');
+            }
+        });
+    }
+
+    function openRejectModal(adId, title, currentReason){
+        $('#reject_ad_id').val(adId);
+        $('#reject_ad_title').text('#' + adId + ' - ' + title);
+        $('#reject_ad_reason').val(currentReason || '');
+        $('#reject_modal_alert').html('');
+        $('#btnConfirmReject').prop('disabled', false).html('<i class="fa fa-times-circle mr-1"></i> Reject Advertisement');
+        $('#reject_ad_modal').modal('show');
+    }
+
+    function executeRejectAd(){
+        var form = $('#reject_ad_form');
+        var reason = $('#reject_ad_reason').val().trim();
+        var btn = $('#btnConfirmReject');
+        var alertBox = $('#reject_modal_alert');
+
+        if(!reason){
+            alertBox.html('<div class="alert alert-danger border-0 py-2 small mb-0"><i class="fa fa-exclamation-circle mr-1"></i> Rejection reason is required. Please explain why this ad cannot be approved.</div>');
+            $('#reject_ad_reason').focus();
+            return false;
+        }
+
+        btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin mr-1"></i> Rejecting Advertisement...');
+
+        $.ajax({
+            url: '<?=base_url("admin/ads/reject_ad")?>',
+            type: 'POST',
+            data: form.serialize(),
+            dataType: 'json',
+            success: function(res){
+                if(res.csrf_token){
+                    $('#approve_csrf_token').val(res.csrf_token);
+                    $('#reject_csrf_token').val(res.csrf_token);
+                }
+                if(res.success){
+                    alertBox.html('<div class="alert alert-success border-0 py-2 small mb-0"><i class="fa fa-check-circle mr-1"></i> ' + res.message + '</div>');
+                    setTimeout(function(){
+                        $('#reject_ad_modal').modal('hide');
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    btn.prop('disabled', false).html('<i class="fa fa-times-circle mr-1"></i> Reject Advertisement');
+                    alertBox.html('<div class="alert alert-danger border-0 py-2 small mb-0"><i class="fa fa-exclamation-triangle mr-1"></i> ' + (res.message || 'Error occurred.') + '</div>');
+                }
+            },
+            error: function(xhr, status, error){
+                btn.prop('disabled', false).html('<i class="fa fa-times-circle mr-1"></i> Reject Advertisement');
+                var errMsg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Error communicating with server.';
+                alertBox.html('<div class="alert alert-danger border-0 py-2 small mb-0"><i class="fa fa-exclamation-triangle mr-1"></i> ' + errMsg + '</div>');
+            }
+        });
+    }
+
+    function previewImage(imageUrl, caption){
+        $('#lightbox_image').attr('src', imageUrl);
+        $('#lightbox_caption').text(caption || 'Advertisement Banner');
+        $('#image_lightbox_modal').modal('show');
     }
 </script>

@@ -84,6 +84,45 @@ class Business extends CI_Controller {
         echo $result;
     }
 
+    public function edit_ad(){
+        $adID = (int)$this->input->get('ad');
+        $userID = getUserID($this->userToken);
+        $business = $this->Business_model->get_business_info($userID);
+        $businessID = isset($business['id']) ? $business['id'] : 0;
+
+        if(empty($adID) || empty($businessID)){
+            redirect('business/ads');
+            return;
+        }
+
+        $ad = $this->Business_model->load_ad_details($adID, $businessID);
+        if(empty($ad)){
+            redirect('business/ads');
+            return;
+        }
+
+        $data['title'] = 'Edit & Resubmit Ad - 24ads';
+        $data['business'] = $business;
+        $data['ad'] = $ad;
+        $data['questions'] = $this->Business_model->load_ad_questions($adID);
+        $data['history'] = $this->Business_model->load_ad_history($adID);
+        $this->setView('edit_ad', $data);
+    }
+
+    public function update_ad(){
+        $userID = getUserID($this->userToken);
+        $business = $this->Business_model->get_business_info($userID);
+        $businessID = isset($business['id']) ? $business['id'] : 0;
+        if(empty($businessID)){
+            echo ErrorMsg('Business profile not found. Please complete your profile first.');
+            return;
+        }
+
+        $postData = $this->input->post();
+        $result = $this->Business_model->update_ad($postData, $userID, $businessID);
+        echo $result;
+    }
+
     public function transactions(){
         $data['title'] = 'Transactions & Financials - 24ads';
         $userID = getUserID($this->userToken);

@@ -289,6 +289,163 @@ class Business_model extends CI_Model {
             }
         }
 
+        // Record initial submission in audit trail
+        $this->db->insert('tbl_ad_approval_history', [
+            'ad_id'      => $adID,
+            'admin_id'   => null,
+            'action'     => 'SUBMITTED',
+            'comment'    => 'Initial advertisement creation submitted for administrator review.',
+            'created_at' => $createdDate
+        ]);
+
+        return 'Success';
+    }
+
+    /**
+     * Load questions attached to an ad
+     */
+    public function load_ad_questions($adID){
+        $this->db->select('*');
+        $this->db->from('tbl_questions');
+        $this->db->where('ads_id', (int)$adID);
+        $this->db->where('status', '0');
+        return $this->db->get()->result_array();
+    }
+
+    /**
+     * Load approval history audit trail for an ad (visible to advertiser)
+     */
+    public function load_ad_history($adID){
+        $this->db->select('tbl_ad_approval_history.*, tbl_admin_info.name as admin_name');
+        $this->db->from('tbl_ad_approval_history');
+        $this->db->join('tbl_admin_info', 'tbl_admin_info.admin_id = tbl_ad_approval_history.admin_id', 'left');
+        $this->db->where('tbl_ad_approval_history.ad_id', (int)$adID);
+        $this->db->order_by('tbl_ad_approval_history.created_at', 'DESC');
+        return $this->db->get()->result();
+    }
+
+    /**
+     * Update/Resubmit rejected or pending ad
+     * Requirement 9: If user edits rejected ad, REJECTED -> PENDING
+     * Ad must NOT automatically become active. It must go through admin approval again.
+     */
+    public function update_ad($data, $userID, $businessID){
+        $adID = (int)($data['ad_id'] ?? ($data['id'] ?? 0));
+        if(empty($adID)){
+            return ErrorMsg('Invalid advertisement identifier.');
+        }
+
+        // Verify ad belongs to this business
+        $existing = $this->db->where('id', $adID)->where('business_id', $businessID)->where('status!=', '1')->get('tbl_ads')->row_array();
+        if(empty($existing)){
+            return ErrorMsg('Advertisement not found or unauthorized access.');
+        }
+
+        $title = trim($data['title'] ?? '');
+        $url = trim($data['url'] ?? '');
+        $contents = trim($data['contents'] ?? '');
+        $budget_allocated = (float)($data['budget_allocated'] ?? 0);
+        $cost_per_click = (float)($data['cost_per_click'] ?? 0);
+        $question_timer = (int)($data['question_timer'] ?? 2);
+        $total_bonus_allocated = (float)($data['total_bonus_allocated'] ?? 0);
+        $bonus = (float)($data['bonus'] ?? 0);
+
+        if(empty($title)){
+            return ErrorMsg('Please enter the campaign title.');
+        }
+        if(empty($contents)){
+            return ErrorMsg('Please provide advertisement content/description.');
+        }
+        if($budget_allocated <= 0){
+            return ErrorMsg('Please enter a valid budget amount in TZS.');
+        }
+        if($cost_per_click <= 0){
+            return ErrorMsg('Please enter a valid cost per view in TZS.');
+        }
+
+        // Check if new banner image was uploaded
+        $bannerFile = $existing['banner'];
+        if(isset($_FILES['banner']) && !empty($_FILES['banner']['name'])){
+            $upload_path = FCPATH . 'media/banner/';
+            if(!is_dir($upload_path)){
+                @mkdir($upload_path, 0777, true);
+            }
+
+            $config['upload_path']   = $upload_path;
+            $config['allowed_types'] = 'gif|jpg|png|jpeg|PNG|JPG|JPEG';
+            $config['max_size']      = 25600;
+            $ext = pathinfo($_FILES['banner']['name'], PATHINFO_EXTENSION);
+            $cleanTitle = preg_replace('/[^a-zA-Z0-9_-]/', '_', strtolower($title));
+            $config['file_name']     = substr($cleanTitle, 0, 30) . '_' . date("dmY_His") . '.' . $ext;
+
+            $this->load->library('upload', $config);
+            $this->upload->initialize($config);
+
+            if($this->upload->do_upload('banner')){
+                $fileData = $this->upload->data();
+                $bannerFile = $fileData['file_name'];
+            }
+        }
+
+        $now = date("Y-m-d H:i:s");
+        $wasRejected = ($existing['ads_status'] == '3');
+
+        // Update ad data: MUST return to PENDING (2)
+        $updateData = array(
+            'title'                 => $title,
+            'url'                   => $url,
+            'banner'                => $bannerFile,
+            'contents'              => $contents,
+            'budget_allocated'      => $budget_allocated,
+            'cost_per_click'        => $cost_per_click,
+            'total_bonus_allocated' => $total_bonus_allocated,
+            'bonus'                 => $bonus,
+            'question_timer'        => $question_timer,
+            'ads_status'            => '2', // ALWAYS PENDING on resubmission
+            'updated_at'            => $now
+        );
+
+        $this->db->where('id', $adID)->update('tbl_ads', $updateData);
+
+        // Update questions if provided
+        if(isset($data['questions']) && is_array($data['questions'])){
+            // Delete old questions for this ad
+            $this->db->where('ads_id', $adID)->delete('tbl_questions');
+
+            foreach($data['questions'] as $q){
+                if(is_array($q) && !empty($q['text'])){
+                    $qText = trim($q['text']);
+                    $qAnswers = trim($q['answers'] ?? '');
+                    $qCorrect = trim($q['correct'] ?? '');
+                    $isBonus = (!empty($q['is_bonus']) && $q['is_bonus'] == '1') ? '1' : '0';
+
+                    $this->db->insert('tbl_questions', array(
+                        'ads_id'         => $adID,
+                        'question'       => $qText,
+                        'answers'        => $qAnswers,
+                        'correct_answer' => $qCorrect,
+                        'is_bonus'       => $isBonus,
+                        'status'         => '0',
+                        'createdDate'    => $now,
+                        'createdBy'      => $userID
+                    ));
+                }
+            }
+        }
+
+        // Record in approval audit trail (Requirement 9 & 11)
+        $historyComment = $wasRejected
+            ? "Advertiser revised rejected advertisement and resubmitted for administrator review. (Previous rejection reason: {$existing['rejected_reason']})"
+            : "Advertiser modified campaign details. Resubmitted for administrator review.";
+
+        $this->db->insert('tbl_ad_approval_history', array(
+            'ad_id'      => $adID,
+            'admin_id'   => null,
+            'action'     => 'RESUBMITTED',
+            'comment'    => $historyComment,
+            'created_at' => $now
+        ));
+
         return 'Success';
     }
 

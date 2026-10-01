@@ -132,6 +132,15 @@
                             </td>
                             <td class="text-right pr-4">
                                 <div class="btn-group">
+                                    <?php if($ad->ads_status == '3'){ ?>
+                                        <a href="<?=base_url('business/edit_ad?ad='.$ad->id)?>" class="btn btn-sm btn-danger font-weight-700 px-2 py-1 mr-1" title="Edit & Resubmit" style="border-radius: 6px; font-size: 12px;">
+                                            <i class="fas fa-edit mr-1"></i> Edit & Resubmit
+                                        </a>
+                                    <?php } elseif($ad->ads_status == '2') { ?>
+                                        <a href="<?=base_url('business/edit_ad?ad='.$ad->id)?>" class="btn btn-sm btn-outline-warning font-weight-600 px-2 py-1 mr-1" title="Edit Pending Ad" style="border-radius: 6px; font-size: 12px;">
+                                            <i class="fas fa-edit mr-1"></i> Edit
+                                        </a>
+                                    <?php } ?>
                                     <?php if(!empty($ad->url)){ ?>
                                         <a href="<?=htmlspecialchars($ad->url)?>" target="_blank" class="btn btn-sm btn-light font-weight-600 px-2 py-1 mr-1" title="Visit Link" style="border-radius: 6px; font-size: 12px;">
                                             <i class="fas fa-external-link-alt"></i>

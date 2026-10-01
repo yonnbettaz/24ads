@@ -5,9 +5,9 @@ class Admin extends CI_Controller {
     public function __construct(){
         parent::__construct();
         $this->load->model('admin/Admin_model');
-        $this->userToken=$this->session->userdata('24ads_ad_user_idetification');
-        $this->is_logged_in();
-        $this->userID=getUserID($this->userToken);
+        $this->admin_auth->require_admin();
+        $this->userToken = $this->session->userdata('24ads_ad_user_idetification');
+        $this->userID = $this->admin_auth->get_admin_id() ? $this->admin_auth->get_admin_id() : getAdminUserID($this->userToken);
     }
 
     public function index($page="index"){
@@ -16,15 +16,23 @@ class Admin extends CI_Controller {
         }
 
         if($page=='index'){
-            $data['title'] = 'Admin - 24ads';
-            $data['page_header'] = 'System Admin';
+            $data['title'] = 'Ads Administration Dashboard - 24ads';
+            $data['page_header'] = 'ADS ADMINISTRATION';
             $data['page_title'] = 'Dashboard';
             $this->load->model('admin/Reports_model');
-            $data['total_personal_accounts']=$this->Reports_model->get_total_personal_accounts();
-            $data['total_business_accounts']=$this->Reports_model->get_total_business_accounts();
-            $data['total_ads']=$this->Reports_model->get_total_ads();
-            $data['total_active_ads']=$this->Reports_model->get_total_active_ads();
-            $data['latest_ads']=$this->Reports_model->load_latest_ads();
+            $data['total_personal_accounts'] = $this->Reports_model->get_total_personal_accounts();
+            $data['total_business_accounts'] = $this->Reports_model->get_total_business_accounts();
+            $data['total_ads'] = $this->Reports_model->get_total_ads();
+            $data['pending_ads'] = $this->Reports_model->get_total_pending_ads();
+            $data['active_ads'] = $this->Reports_model->get_total_active_ads();
+            $data['rejected_ads'] = $this->Reports_model->get_total_rejected_ads();
+            $data['ads_created_today'] = $this->Reports_model->get_ads_created_today();
+            $data['ads_approved_today'] = $this->Reports_model->get_ads_approved_today();
+            $data['ads_rejected_today'] = $this->Reports_model->get_ads_rejected_today();
+            $data['recent_pending'] = $this->Reports_model->load_recent_pending_ads(6);
+            $data['recent_approvals'] = $this->Reports_model->load_recent_approvals(6);
+            $data['recent_rejections'] = $this->Reports_model->load_recent_rejections(6);
+            $data['latest_ads'] = $this->Reports_model->load_latest_ads();
         }else{
             $data['title'] = ucwords(str_replace("_", " ", $page)).' - 24ads';
         }
@@ -318,24 +326,17 @@ class Admin extends CI_Controller {
     }
 
     public function logout(){
-        unset($_SESSION['24ads_ad_user_idetification']);
-        $this->session->sess_destroy();
+        $this->admin_auth->logout();
         redirect('admin/users/login');
     }
 
     public function is_login(){
-        if(isset($_SESSION['24ads_ad_user_idetification']) && $this->session->userdata('24ads_ad_user_idetification')!=""){
-            return true;
-        }else{
-            die("Session expired, please! refresh the page");
-        }
+        $this->admin_auth->require_admin(null, true);
+        return true;
     }
 
     public function is_logged_in(){
-        $is_logged_in = $this->session->userdata('24ads_ad_user_idetification');
-        if ($is_logged_in != TRUE) {
-            redirect('admin/users/login');
-        }
+        $this->admin_auth->require_admin();
     }
     /*end of user logs*/
 }

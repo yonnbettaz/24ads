@@ -138,48 +138,56 @@
 						<li class="menu-title"> 
 							<span>Main</span>
 						</li>
-						<li class="active"><a href="<?=base_url('admin')?>"><i class="fe fe-home"></i> <span>Home</span></a></li>
-						<li class="submenu">
-							<a href="#"><i class="fe fe-document"></i> <span> Ads</span> <span class="badge badge-success m-r-10" id="ads_note_counter"></span> <span class="menu-arrow"></span></a>
+						<li class="<?=($this->uri->segment(1)=='admin' && ($this->uri->segment(2)=='' || $this->uri->segment(2)=='index')) ? 'active' : ''?>">
+							<a href="<?=base_url('admin')?>"><i class="fe fe-home"></i> <span>Dashboard</span></a>
+						</li>
+						<li class="submenu <?=($this->uri->segment(2)=='ads' || $this->uri->segment(1)=='admin' && in_array($this->uri->segment(2), ['pending_ads','active_ads','denied_ads','closed_ads','all_ads','ads_details'])) ? 'active' : ''?>">
+							<a href="#"><i class="fe fe-document"></i> <span> Advertisements</span> <span class="badge badge-warning m-r-10" id="ads_note_counter"></span> <span class="menu-arrow"></span></a>
+							<ul style="display: <?=($this->uri->segment(2)=='ads' || in_array($this->uri->segment(2), ['pending_ads','active_ads','denied_ads','closed_ads','all_ads','ads_details'])) ? 'block' : 'none'?>;">
+								<li><a href="<?=base_url('admin/ads/all_ads')?>"><i class="fa fa-list mr-1"></i> All Ads</a></li>
+								<li><a href="<?=base_url('admin/ads/pending_ads')?>"><i class="fa fa-clock-o text-warning mr-1"></i> Pending Approval</a></li>
+								<li><a href="<?=base_url('admin/ads/active_ads')?>"><i class="fa fa-check-circle text-success mr-1"></i> Active Ads</a></li>
+								<li><a href="<?=base_url('admin/ads/denied_ads')?>"><i class="fa fa-times-circle text-danger mr-1"></i> Rejected Ads</a></li>
+								<li><a href="<?=base_url('admin/ads/closed_ads')?>"><i class="fa fa-ban text-secondary mr-1"></i> Closed Ads</a></li>
+								<li><a href="<?=base_url('admin/ads/promo')?>"><i class="fa fa-star text-info mr-1"></i> Promo Banners</a></li>
+							</ul>
+						</li>
+						<li class="<?=($this->uri->segment(2)=='ads' && $this->uri->segment(3)=='approval_history') ? 'active' : ''?>">
+							<a href="<?=base_url('admin/ads/approval_history')?>"><i class="fe fe-activity"></i> <span>Approval History</span></a>
+						</li>
+						<li class="submenu <?=($this->uri->segment(2)=='users') ? 'active' : ''?>">
+							<a href="#"><i class="fe fe-user"></i> <span> Users</span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
-								<li><a href="<?=base_url('admin/ads/pending_ads')?>">Pending Ads</a></li>
-								<li><a href="<?=base_url('admin/ads/active_ads')?>">Active Ads</a></li>
-								<li><a href="<?=base_url('admin/ads/denied_ads')?>">Denied Ads</a></li>
-								<li><a href="<?=base_url('admin/ads/closed_ads')?>">Closed Ads</a></li>
-								<li><a href="<?=base_url('admin/ads/promo')?>">Promo</a></li>
+								<li><a href="<?=base_url('admin/users/system_users')?>">System Users</a></li>
+								<li><a href="<?=base_url('admin/users/add_user')?>">Add User</a></li>
+								<li><a href="<?=base_url('admin/users/roles')?>">User Roles & Permissions</a></li>
 							</ul>
 						</li>
 						<li class="submenu">
-							<a href="#"><i class="fe fe-users"></i> <span> Business Profiles</span> <span class="menu-arrow"></span></a>
+							<a href="#"><i class="fe fe-users"></i> <span> Business Accounts</span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
 								<li><a href="<?=base_url('admin/business_records')?>">Business Records</a></li>
+								<li><a href="<?=base_url('admin/business_accounts')?>">Business Accounts</a></li>
 								<li><a href="<?=base_url('admin/budget_history')?>">Budget History</a></li>
 							</ul>
 						</li>
 						<li class="submenu">
-							<a href="#"><i class="fe fe-users"></i> <span> Personal Profiles </span> <span class="menu-arrow"></span></a>
+							<a href="#"><i class="fe fe-users"></i> <span> Personal Accounts </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
+								<li><a href="<?=base_url('admin/personal_accounts')?>"> Personal Accounts </a></li>
 								<li><a href="<?=base_url('admin/personal_records')?>"> Personal Records </a></li>
 								<li><a href="<?=base_url('admin/transaction_balance')?>"> Transaction Balance</a></li>
 								<li><a href="<?=base_url('admin/transaction_history')?>"> Transaction History</a></li>
-								<li><a href="<?=base_url('admin/pending_transactions')?>"> Pending Transactions </a></li>
-								<li><a href="<?=base_url('admin/personal_withdraw')?>"> Withdraw Request </a></li>
+								<li><a href="<?=base_url('admin/personal_withdraw')?>"> Withdraw Requests </a></li>
 							</ul>
 						</li>
 						<li class="submenu">
-							<a href="#"><i class="fa fa-user"></i> <span> Accounts </span> <span class="menu-arrow"></span></a>
+							<a href="#"><i class="fe fe-book"></i> <span> Reports </span> <span class="menu-arrow"></span></a>
 							<ul style="display: none;">
-								<li><a href="<?=base_url('admin/personal_accounts')?>"> Personal Accounts </a></li>
-								<li><a href="<?=base_url('admin/business_accounts')?>"> Business Accounts </a></li>
-							</ul>
-						</li>
-						<li class="submenu">
-							<a href="#"><i class="fe fe-book"></i> <span> Report </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="<?=base_url('admin/reports/personal_account_report')?>"> Personal Ac. Report </a></li>
-								<li><a href="<?=base_url('admin/reports/business_account_report')?>"> Business Ac. Report </a></li>
 								<li><a href="<?=base_url('admin/reports/ads_report')?>"> Ads Report </a></li>
 								<li><a href="<?=base_url('admin/reports/cash_flow_report')?>"> Cash Flow </a></li>
+								<li><a href="<?=base_url('admin/reports/business_account_report')?>"> Business Ac. Report </a></li>
+								<li><a href="<?=base_url('admin/reports/personal_account_report')?>"> Personal Ac. Report </a></li>
 							</ul>
 						</li>
 						<li class="menu-title"> 
@@ -190,26 +198,17 @@
 							<ul style="display: none;">
 								<li><a href="<?=base_url('admin/payment_providers')?>"> <span>Payment Providers</span></a></li>
 								<li><a href="<?=base_url('admin/settings')?>"> <span>System Settings</span></a></li>
-								<li class="submenu">
-									<a href="javascript:void(0);"> <span>Cost Settings</span> <span class="menu-arrow"></span></a>
-									<ul style="display: none;">
-										<li><a href="<?=base_url('admin/setting/business_costs')?>"><span>Business Costs</span></a></li>
-										<li><a href="<?=base_url('admin/setting/personal_costs')?>"><span>Personal Costs</span></a></li>
-									</ul>
-								</li>
 							</ul>
 						</li>
-						<li class="submenu">
-							<a href="#"><i class="fe fe-user"></i> <span> System Users </span> <span class="menu-arrow"></span></a>
-							<ul style="display: none;">
-								<li><a href="<?=base_url('admin/users/add_user')?>">Add User </a></li>
-								<li><a href="<?=base_url('admin/users/system_users')?>">Manage Users </a></li>
-								<li><a href="<?=base_url('admin/users/roles')?>">Manage Role </a></li>
-							</ul>
+						<li class="<?=($this->uri->segment(2)=='users' && $this->uri->segment(3)=='profile') ? 'active' : ''?>">
+							<a href="<?=base_url('admin/users/profile')?>"><i class="fe fe-info"></i> <span>Profile</span></a>
 						</li>
-						<li><a href="<?=base_url('admin/users/profile')?>"><i class="fe fe-info"></i> <span> Profile </span> </a></li>
-						<li><a href="javascript:void(0);" data-toggle="modal" data-target="#changepassword"><i class="fe fe-key"></i> <span> Change Password </span> </a></li>
-						<li><a href="<?=base_url('admin/logout')?>"><i class="fe fe-logout"></i> <span>Logout</span> </a></li>
+						<li>
+							<a href="javascript:void(0);" data-toggle="modal" data-target="#changepassword"><i class="fe fe-key"></i> <span>Change Password</span></a>
+						</li>
+						<li>
+							<a href="<?=base_url('admin/logout')?>"><i class="fe fe-logout"></i> <span>Logout</span></a>
+						</li>
 					</ul>
 				</div>
             </div>

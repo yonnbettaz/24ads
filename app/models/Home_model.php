@@ -43,7 +43,7 @@
     		if(empty($ads_id)){
     			return $result;
     		}
-    		$this->db->select('tbl_ads.id, tbl_ads.title, tbl_ads.contents, tbl_ads.url, tbl_ads.banner, tbl_ads.cost_per_click, tbl_ads.budget_allocated, tbl_ads.total_bonus_allocated, tbl_ads.bonus, tbl_ads.question_timer, tbl_ads.ads_status, tbl_ads.date_uploaded, tbl_business_info.business_name, tbl_business_info.logo as business_logo, tbl_business_info.business_phone, tbl_business_info.business_email, tbl_business_info.business_website, tbl_business_info.region, tbl_business_info.district');
+    		$this->db->select('tbl_ads.id, tbl_ads.business_id, tbl_ads.title, tbl_ads.contents, tbl_ads.url, tbl_ads.banner, tbl_ads.cost_per_click, tbl_ads.budget_allocated, tbl_ads.total_bonus_allocated, tbl_ads.bonus, tbl_ads.question_timer, tbl_ads.ads_status, tbl_ads.date_uploaded, tbl_business_info.business_name, tbl_business_info.logo as business_logo, tbl_business_info.business_phone, tbl_business_info.business_email, tbl_business_info.business_website, tbl_business_info.region, tbl_business_info.district');
     		$this->db->from('tbl_ads');
     		$this->db->join('tbl_business_info', 'tbl_business_info.id=tbl_ads.business_id AND tbl_business_info.status="0"', 'left');
     		$this->db->where('tbl_ads.id', $ads_id);

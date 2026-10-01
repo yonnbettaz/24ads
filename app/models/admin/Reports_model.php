@@ -143,6 +143,84 @@
             return $result;
         }
 
+        public function get_total_pending_ads(){
+            $this->db->select('id');
+            $this->db->from('tbl_ads');
+            $this->db->where('ads_status', '2');
+            $this->db->where('status!=', '1');
+            return $this->db->count_all_results();
+        }
+
+        public function get_total_rejected_ads(){
+            $this->db->select('id');
+            $this->db->from('tbl_ads');
+            $this->db->where('ads_status', '3');
+            $this->db->where('status!=', '1');
+            return $this->db->count_all_results();
+        }
+
+        public function get_ads_created_today(){
+            $today = date('Y-m-d');
+            $this->db->select('id');
+            $this->db->from('tbl_ads');
+            $this->db->like('date_uploaded', $today, 'after');
+            $this->db->where('status!=', '1');
+            return $this->db->count_all_results();
+        }
+
+        public function get_ads_approved_today(){
+            $today = date('Y-m-d');
+            $this->db->select('id');
+            $this->db->from('tbl_ad_approval_history');
+            $this->db->where('action', 'APPROVED');
+            $this->db->like('created_at', $today, 'after');
+            return $this->db->count_all_results();
+        }
+
+        public function get_ads_rejected_today(){
+            $today = date('Y-m-d');
+            $this->db->select('id');
+            $this->db->from('tbl_ad_approval_history');
+            $this->db->where('action', 'REJECTED');
+            $this->db->like('created_at', $today, 'after');
+            return $this->db->count_all_results();
+        }
+
+        public function load_recent_pending_ads($limit = 6){
+            $this->db->select('tbl_ads.id, tbl_ads.title, tbl_ads.banner, tbl_ads.cost_per_click, tbl_ads.budget_allocated, tbl_ads.date_uploaded, tbl_ads.ads_status, tbl_business_info.business_name');
+            $this->db->from('tbl_ads');
+            $this->db->join('tbl_business_info', 'tbl_business_info.id = tbl_ads.business_id', 'left');
+            $this->db->where('tbl_ads.ads_status', '2');
+            $this->db->where('tbl_ads.status!=', '1');
+            $this->db->order_by('tbl_ads.date_uploaded', 'DESC');
+            $this->db->limit($limit);
+            return $this->db->get()->result();
+        }
+
+        public function load_recent_approvals($limit = 6){
+            $this->db->select('tbl_ad_approval_history.*, tbl_ads.title as ad_title, tbl_ads.banner as ad_banner, tbl_business_info.business_name, tbl_admin_info.name as admin_name');
+            $this->db->from('tbl_ad_approval_history');
+            $this->db->join('tbl_ads', 'tbl_ads.id = tbl_ad_approval_history.ad_id', 'left');
+            $this->db->join('tbl_business_info', 'tbl_business_info.id = tbl_ads.business_id', 'left');
+            $this->db->join('tbl_admin_info', 'tbl_admin_info.admin_id = tbl_ad_approval_history.admin_id', 'left');
+            $this->db->where('tbl_ad_approval_history.action', 'APPROVED');
+            $this->db->order_by('tbl_ad_approval_history.created_at', 'DESC');
+            $this->db->limit($limit);
+            return $this->db->get()->result();
+        }
+
+        public function load_recent_rejections($limit = 6){
+            $this->db->select('tbl_ad_approval_history.*, tbl_ads.title as ad_title, tbl_ads.banner as ad_banner, tbl_business_info.business_name, tbl_admin_info.name as admin_name');
+            $this->db->from('tbl_ad_approval_history');
+            $this->db->join('tbl_ads', 'tbl_ads.id = tbl_ad_approval_history.ad_id', 'left');
+            $this->db->join('tbl_business_info', 'tbl_business_info.id = tbl_ads.business_id', 'left');
+            $this->db->join('tbl_admin_info', 'tbl_admin_info.admin_id = tbl_ad_approval_history.admin_id', 'left');
+            $this->db->where('tbl_ad_approval_history.action', 'REJECTED');
+            $this->db->order_by('tbl_ad_approval_history.created_at', 'DESC');
+            $this->db->limit($limit);
+            return $this->db->get()->result();
+        }
+
         /*end of statistics*/
 
     }
