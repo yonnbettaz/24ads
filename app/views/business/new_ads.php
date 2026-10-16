@@ -68,9 +68,14 @@
 						</h5>
 						<small class="text-muted">Questions ensure that readers have genuinely paid attention to your ad.</small>
 					</div>
-					<button type="button" class="btn btn-sm btn-outline-primary font-weight-600" id="addQuestionBtn" style="border-radius: 8px;">
-						<i class="fas fa-plus mr-1"></i> Add Question
-					</button>
+					<div class="d-flex align-items-center">
+						<button type="button" class="btn btn-sm btn-outline-primary font-weight-600 mr-2" id="addQuestionBtn" style="border-radius: 8px;">
+							<i class="fas fa-plus mr-1"></i> Add Question
+						</button>
+						<button type="button" class="btn btn-sm btn-outline-warning text-dark font-weight-700" id="addBonusQuestionBtn" style="border-radius: 8px; border-color: #f59e0b; background: #fffdf5;">
+							<i class="fas fa-star text-warning mr-1"></i> Add Bonus Question
+						</button>
+					</div>
 				</div>
 				<div class="card-body p-4">
 					<div id="questions-container">
@@ -98,7 +103,48 @@
 							</div>
 						</div>
 					</div>
-					<small class="text-muted"><i class="fas fa-info-circle mr-1"></i> You can add multiple questions. Viewers will answer them after reading your ad.</small>
+
+					<!-- Single Bonus Question Container -->
+					<div id="bonus-question-container" style="display: none;">
+						<div class="question-block card mb-3 border" id="bonus_q_block" style="border-radius: 14px; border: 2px solid #f59e0b !important; background: #fffdf5; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.12);">
+							<div class="card-body p-3">
+								<div class="d-flex justify-content-between align-items-center mb-2">
+									<div class="d-flex align-items-center">
+										<span class="badge badge-warning text-dark font-weight-800 px-2 py-1 mr-2" style="font-size: 11px; background: #fbbf24;">
+											<i class="fas fa-crown mr-1"></i> SINGLE BONUS QUESTION
+										</span>
+										<span class="text-warning font-weight-700 small"><i class="fas fa-coins mr-1"></i> High Payout Challenge</span>
+									</div>
+									<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" id="removeBonusBtn" style="border-radius: 6px; font-size: 11px;">
+										<i class="fas fa-times mr-1"></i> Remove Bonus
+									</button>
+								</div>
+								<p class="text-muted small mb-2"><i class="fas fa-info-circle text-warning mr-1"></i> Readers answering this bonus question correctly will receive an additional <strong>High Payout Reward</strong>!</p>
+								<input type="hidden" name="questions[bonus][is_bonus]" id="bonus_is_bonus" value="1" disabled>
+								<div class="form-group mb-2">
+									<label for="bonus_text" class="small font-weight-700 text-dark mb-1">Bonus Question Text <span class="text-danger">*</span></label>
+									<input type="text" name="questions[bonus][text]" id="bonus_text" class="form-control" placeholder="e.g., What is our special VIP coupon code mentioned in the ad?" style="border-radius: 8px; border-color: #fde68a;" disabled>
+								</div>
+								<div class="row">
+									<div class="col-md-7 mb-2">
+										<label for="bonus_answers" class="small font-weight-700 text-dark mb-1">Answer Options (Comma separated) <span class="text-danger">*</span></label>
+										<input type="text" name="questions[bonus][answers]" id="bonus_answers" class="form-control" placeholder="e.g., VIP2026, SUPER50, GOLD100, BONUS24" style="border-radius: 8px; border-color: #fde68a;" disabled>
+									</div>
+									<div class="col-md-5 mb-2">
+										<label for="bonus_correct" class="small font-weight-700 text-dark mb-1">Correct Answer (Exact match) <span class="text-danger">*</span></label>
+										<input type="text" name="questions[bonus][correct]" id="bonus_correct" class="form-control" placeholder="e.g., VIP2026" style="border-radius: 8px; border-color: #fde68a;" disabled>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="d-flex justify-content-between align-items-center">
+						<small class="text-muted"><i class="fas fa-info-circle mr-1"></i> Viewers answer interactive questions after reading your ad.</small>
+						<span class="badge badge-light text-muted font-weight-600 px-2 py-1" style="font-size: 11px;" id="bonus-status-badge">
+							<i class="fas fa-star text-muted mr-1"></i> Single Bonus Question: Optional
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -148,21 +194,62 @@
 					</div>
 
 					<div class="form-group mb-3">
-						<label for="cost_per_click" class="font-weight-700 text-dark small text-uppercase">Reward Per View / Reader <span class="text-danger">*</span></label>
+						<label for="cost_per_click" class="font-weight-700 text-dark small text-uppercase">Standard Reward Per View / Reader <span class="text-danger">*</span></label>
 						<div class="input-group">
 							<input type="number" name="cost_per_click" id="cost_per_click" class="form-control font-weight-700" placeholder="100" min="20" step="10" required style="border-radius: 8px 0 0 8px; height: 46px;">
 							<div class="input-group-append">
 								<span class="input-group-text bg-light font-weight-600">TZS</span>
 							</div>
 						</div>
-						<small class="form-text text-muted">Amount earned by reader upon correct quiz answers.</small>
+						<small class="form-text text-muted">Amount earned by reader upon correct standard quiz answers.</small>
+					</div>
+
+					<!-- Single Bonus Question High Payout Section -->
+					<div id="bonus-budget-card" class="p-3 mb-3 border rounded-lg" style="display: none; background: #fffdf5; border-color: #fde68a !important; border-radius: 12px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);">
+						<div class="d-flex align-items-center justify-content-between mb-2">
+							<div class="d-flex align-items-center">
+								<i class="fas fa-crown text-warning mr-2" style="font-size: 15px;"></i>
+								<h6 class="font-weight-800 text-dark mb-0 small text-uppercase">Bonus Question High Payout</h6>
+							</div>
+							<span class="badge badge-warning text-dark font-weight-700 px-2 py-1" style="font-size: 10px; background: #fbbf24;">HIGH PAYOUT</span>
+						</div>
+
+						<div class="form-group mb-3">
+							<label for="bonus_payout" class="font-weight-700 text-dark small text-uppercase">High Payout Per Winner (TZS) <span class="text-danger">*</span></label>
+							<div class="input-group">
+								<input type="number" name="bonus" id="bonus_payout" class="form-control font-weight-700" placeholder="500" min="50" step="50" style="border-radius: 8px 0 0 8px; height: 46px; border-color: #fcd34d;" disabled>
+								<div class="input-group-append">
+									<span class="input-group-text bg-warning text-dark font-weight-700">TZS</span>
+								</div>
+							</div>
+							<small class="form-text text-muted">High reward paid to each reader who answers the bonus question correctly (must exceed standard reward).</small>
+						</div>
+
+						<div class="form-group mb-0">
+							<label for="total_bonus_allocated" class="font-weight-700 text-dark small text-uppercase">Total Bonus Budget (TZS) <span class="text-danger">*</span></label>
+							<div class="input-group">
+								<input type="number" name="total_bonus_allocated" id="total_bonus_allocated" class="form-control font-weight-700" placeholder="20000" min="500" step="500" style="border-radius: 8px 0 0 8px; height: 46px; border-color: #fcd34d;" disabled>
+								<div class="input-group-append">
+									<span class="input-group-text bg-warning text-dark font-weight-700">TZS</span>
+								</div>
+							</div>
+							<small class="form-text text-muted">Separate pool dedicated exclusively to bonus payouts.</small>
+						</div>
 					</div>
 
 					<!-- Estimated Audience Reach Calculation Card -->
 					<div class="p-3 mb-3" style="background: linear-gradient(135deg, rgba(30,58,138,0.06) 0%, rgba(16,185,129,0.06) 100%); border-radius: 12px; border: 1px solid #e2e8f0;">
-						<div class="d-flex justify-content-between align-items-center">
-							<span class="small font-weight-600 text-muted">Estimated Reach:</span>
-							<h5 class="font-weight-800 text-primary mb-0" id="estimated_reach">0 Viewers</h5>
+						<div class="d-flex justify-content-between align-items-center mb-1">
+							<span class="small font-weight-600 text-muted">Standard Viewers:</span>
+							<h6 class="font-weight-800 text-primary mb-0" id="estimated_reach">0 Viewers</h6>
+						</div>
+						<div id="bonus-reach-row" class="justify-content-between align-items-center mb-1" style="display: none;">
+							<span class="small font-weight-600 text-warning"><i class="fas fa-crown mr-1"></i> Bonus Winners:</span>
+							<h6 class="font-weight-800 text-warning mb-0" id="estimated_bonus_reach">0 Winners</h6>
+						</div>
+						<div id="total-investment-row" class="justify-content-between align-items-center pt-2 mt-2 border-top" style="display: none;">
+							<span class="small font-weight-700 text-dark">Total Budget:</span>
+							<h6 class="font-weight-800 text-success mb-0" id="total_campaign_budget">0 TZS</h6>
 						</div>
 					</div>
 
@@ -198,6 +285,59 @@ $(document).ready(function(){
 		}
 	});
 
+	// Bonus Question Management (Single Bonus Question with High Payout)
+	var hasBonus = false;
+
+	function toggleBonusQuestion(enable){
+		hasBonus = enable;
+		if(hasBonus){
+			$('#bonus-question-container').slideDown(250);
+			$('#bonus_is_bonus').prop('disabled', false);
+			$('#bonus_text, #bonus_answers, #bonus_correct').prop('disabled', false).prop('required', true);
+
+			$('#bonus-budget-card').slideDown(250);
+			$('#bonus_payout, #total_bonus_allocated').prop('disabled', false).prop('required', true);
+
+			// Pre-fill suggested high payout if empty
+			var cpc = parseFloat($('#cost_per_click').val()) || 100;
+			if(!$('#bonus_payout').val()){
+				$('#bonus_payout').val(cpc * 5); // 5x higher payout suggestion
+			}
+			if(!$('#total_bonus_allocated').val()){
+				var regularBudget = parseFloat($('#budget_allocated').val()) || 50000;
+				$('#total_bonus_allocated').val(Math.max(10000, Math.floor(regularBudget * 0.3)));
+			}
+
+			$('#bonus-reach-row, #total-investment-row').css('display', 'flex');
+			$('#addBonusQuestionBtn').removeClass('btn-outline-warning').addClass('btn-warning text-dark')
+				.html('<i class="fas fa-check mr-1"></i> Bonus Active (1/1)').prop('disabled', true);
+			$('#bonus-status-badge').removeClass('badge-light text-muted').addClass('badge-warning text-dark')
+				.html('<i class="fas fa-crown mr-1"></i> Single Bonus Question Active');
+		} else {
+			$('#bonus-question-container').slideUp(250);
+			$('#bonus_is_bonus').prop('disabled', true);
+			$('#bonus_text, #bonus_answers, #bonus_correct').prop('disabled', true).prop('required', false).val('');
+
+			$('#bonus-budget-card').slideUp(250);
+			$('#bonus_payout, #total_bonus_allocated').prop('disabled', true).prop('required', false).val('');
+
+			$('#bonus-reach-row, #total-investment-row').hide();
+			$('#addBonusQuestionBtn').removeClass('btn-warning text-dark').addClass('btn-outline-warning text-dark')
+				.html('<i class="fas fa-star text-warning mr-1"></i> Add Bonus Question').prop('disabled', false);
+			$('#bonus-status-badge').removeClass('badge-warning text-dark').addClass('badge-light text-muted')
+				.html('<i class="fas fa-star text-muted mr-1"></i> Single Bonus Question: Optional');
+		}
+		calculateReach();
+	}
+
+	$('#addBonusQuestionBtn').click(function(){
+		toggleBonusQuestion(true);
+	});
+
+	$('#removeBonusBtn').click(function(){
+		toggleBonusQuestion(false);
+	});
+
 	// Live estimated reach calculation
 	function calculateReach(){
 		var budget = parseFloat($('#budget_allocated').val()) || 0;
@@ -208,10 +348,23 @@ $(document).ready(function(){
 		} else {
 			$('#estimated_reach').text('0 Viewers');
 		}
-	}
-	$('#budget_allocated, #cost_per_click').on('input change', calculateReach);
 
-	// Dynamic Quiz Questions Management
+		if(hasBonus){
+			var bonusBudget = parseFloat($('#total_bonus_allocated').val()) || 0;
+			var bonusPayout = parseFloat($('#bonus_payout').val()) || 0;
+			if(bonusBudget > 0 && bonusPayout > 0){
+				var bonusReach = Math.floor(bonusBudget / bonusPayout);
+				$('#estimated_bonus_reach').text(bonusReach.toLocaleString() + ' Winners');
+			} else {
+				$('#estimated_bonus_reach').text('0 Winners');
+			}
+			var totalInvestment = budget + bonusBudget;
+			$('#total_campaign_budget').text(totalInvestment.toLocaleString() + ' TZS');
+		}
+	}
+	$('#budget_allocated, #cost_per_click, #bonus_payout, #total_bonus_allocated').on('input change', calculateReach);
+
+	// Dynamic Standard Quiz Questions Management
 	var qCount = 1;
 	$('#addQuestionBtn').click(function(){
 		var index = qCount;
@@ -244,7 +397,7 @@ $(document).ready(function(){
 		$('#questions-container').append(qHtml);
 	});
 
-	// Remove question block
+	// Remove standard question block
 	$(document).on('click', '.remove-q-btn', function(){
 		var target = $(this).data('target');
 		$(target).remove();
@@ -256,6 +409,34 @@ $(document).ready(function(){
 		if(!form.checkValidity()){
 			form.reportValidity();
 			return false;
+		}
+
+		// Bonus Question Validation if enabled
+		if(hasBonus){
+			var cpc = parseFloat($('#cost_per_click').val()) || 0;
+			var bonusPayout = parseFloat($('#bonus_payout').val()) || 0;
+			var bonusBudget = parseFloat($('#total_bonus_allocated').val()) || 0;
+
+			if(bonusPayout <= 0){
+				$('#resultMsg').html('<div class="alert alert-danger" style="border-radius: 10px;"><i class="fas fa-exclamation-circle mr-1"></i> Please enter a valid high payout amount for the bonus question.</div>');
+				$('#bonus_payout').focus();
+				return false;
+			}
+			if(bonusBudget <= 0){
+				$('#resultMsg').html('<div class="alert alert-danger" style="border-radius: 10px;"><i class="fas fa-exclamation-circle mr-1"></i> Please enter a valid total bonus budget.</div>');
+				$('#total_bonus_allocated').focus();
+				return false;
+			}
+			if(bonusPayout <= cpc){
+				$('#resultMsg').html('<div class="alert alert-danger" style="border-radius: 10px;"><i class="fas fa-exclamation-circle mr-1"></i> Bonus question payout (' + bonusPayout.toLocaleString() + ' TZS) must be higher than the standard reward per view (' + cpc.toLocaleString() + ' TZS).</div>');
+				$('#bonus_payout').focus();
+				return false;
+			}
+			if(bonusPayout > bonusBudget){
+				$('#resultMsg').html('<div class="alert alert-danger" style="border-radius: 10px;"><i class="fas fa-exclamation-circle mr-1"></i> Bonus question payout cannot exceed the total allocated bonus budget.</div>');
+				$('#bonus_payout').focus();
+				return false;
+			}
 		}
 
 		$('#saveAdBtn').hide();
@@ -289,7 +470,7 @@ $(document).ready(function(){
 				}
 			},
 			error: function(xhr, status, error){
-				$('#resultMsg').html('<div class="alert alert-danger">An error occurred: ' + error + '</div>');
+				$('#resultMsg').html('<div class="alert alert-danger" style="border-radius: 10px;">An error occurred: ' + error + '</div>');
 				$('#saveAdBtn').show();
 				$('#progressAdBtn').hide();
 			}

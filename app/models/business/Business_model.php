@@ -213,6 +213,22 @@ class Business_model extends CI_Model {
             return ErrorMsg('Cost per view cannot exceed total allocated budget.');
         }
 
+        // Validate Single Bonus Question & High Payout
+        if($total_bonus_allocated > 0 || $bonus > 0){
+            if($total_bonus_allocated <= 0){
+                return ErrorMsg('Please enter a valid total bonus budget amount in TZS.');
+            }
+            if($bonus <= 0){
+                return ErrorMsg('Please enter a valid high payout amount for the bonus question in TZS.');
+            }
+            if($bonus > $total_bonus_allocated){
+                return ErrorMsg('Bonus reward per reader cannot exceed total allocated bonus budget.');
+            }
+            if($bonus <= $cost_per_click){
+                return ErrorMsg('Bonus payout (' . number_format($bonus) . ' TZS) must be higher than the standard reward per view (' . number_format($cost_per_click) . ' TZS).');
+            }
+        }
+
         // Upload Banner
         $bannerFile = "";
         unset($_SESSION['uploaded_file']);
@@ -251,7 +267,9 @@ class Business_model extends CI_Model {
             'contents' => $contents,
             'budget_allocated' => $budget_allocated,
             'cost_per_click' => $cost_per_click,
+            'budget_remain' => $budget_allocated,
             'total_bonus_allocated' => $total_bonus_allocated,
+            'total_bonus_remain' => $total_bonus_allocated,
             'bonus' => $bonus,
             'question_timer' => $question_timer,
             'ads_status' => '2', // Pending admin approval
@@ -266,7 +284,8 @@ class Business_model extends CI_Model {
         }
         $adID = $this->db->insert_id();
 
-        // Process Quiz Questions
+        // Process Quiz Questions (Ensuring strictly single bonus question)
+        $bonusCount = 0;
         if(isset($data['questions']) && is_array($data['questions'])){
             foreach($data['questions'] as $q){
                 if(is_array($q) && !empty($q['text'])){
@@ -274,6 +293,15 @@ class Business_model extends CI_Model {
                     $qAnswers = trim($q['answers'] ?? '');
                     $qCorrect = trim($q['correct'] ?? '');
                     $isBonus = (!empty($q['is_bonus']) && $q['is_bonus'] == '1') ? '1' : '0';
+
+                    // Enforce only a single bonus question
+                    if($isBonus == '1'){
+                        if($bonusCount >= 1){
+                            $isBonus = '0';
+                        } else {
+                            $bonusCount++;
+                        }
+                    }
 
                     $this->db->insert('tbl_questions', array(
                         'ads_id' => $adID,
@@ -363,6 +391,22 @@ class Business_model extends CI_Model {
             return ErrorMsg('Please enter a valid cost per view in TZS.');
         }
 
+        // Validate Single Bonus Question & High Payout
+        if($total_bonus_allocated > 0 || $bonus > 0){
+            if($total_bonus_allocated <= 0){
+                return ErrorMsg('Please enter a valid total bonus budget amount in TZS.');
+            }
+            if($bonus <= 0){
+                return ErrorMsg('Please enter a valid high payout amount for the bonus question in TZS.');
+            }
+            if($bonus > $total_bonus_allocated){
+                return ErrorMsg('Bonus reward per reader cannot exceed total allocated bonus budget.');
+            }
+            if($bonus <= $cost_per_click){
+                return ErrorMsg('Bonus payout (' . number_format($bonus) . ' TZS) must be higher than the standard reward per view (' . number_format($cost_per_click) . ' TZS).');
+            }
+        }
+
         // Check if new banner image was uploaded
         $bannerFile = $existing['banner'];
         if(isset($_FILES['banner']) && !empty($_FILES['banner']['name'])){
@@ -407,7 +451,8 @@ class Business_model extends CI_Model {
 
         $this->db->where('id', $adID)->update('tbl_ads', $updateData);
 
-        // Update questions if provided
+        // Update questions if provided (Ensuring single bonus question)
+        $bonusCount = 0;
         if(isset($data['questions']) && is_array($data['questions'])){
             // Delete old questions for this ad
             $this->db->where('ads_id', $adID)->delete('tbl_questions');
@@ -418,6 +463,14 @@ class Business_model extends CI_Model {
                     $qAnswers = trim($q['answers'] ?? '');
                     $qCorrect = trim($q['correct'] ?? '');
                     $isBonus = (!empty($q['is_bonus']) && $q['is_bonus'] == '1') ? '1' : '0';
+
+                    if($isBonus == '1'){
+                        if($bonusCount >= 1){
+                            $isBonus = '0';
+                        } else {
+                            $bonusCount++;
+                        }
+                    }
 
                     $this->db->insert('tbl_questions', array(
                         'ads_id'         => $adID,
